@@ -8,9 +8,7 @@ from django.conf import settings
 from views import shop
 
 urls = patterns('',
-    url(r'', include(shop.urls)),
-    
-    url(r'^$', lambda request: redirect('product_list')),
+    url(r'', include(shop.urls)),    
     url(r'^products/$', 'cadoshop.views.product_list', name='product_list'),
     url(r'^product/(?P<object_id>\d+)/$', 'cadoshop.views.product_detail', name='product_detail'),
     

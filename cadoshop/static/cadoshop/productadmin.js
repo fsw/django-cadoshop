@@ -28,7 +28,6 @@ $(function(){
 				extra[$(elem).attr('name').substring(6, $(elem).attr('name').length-1)] = $(elem).val(); 
 			});
 			$('#id_extra').val(JSON.stringify(extra));
-			alert('123');
 		});
 	}
 })

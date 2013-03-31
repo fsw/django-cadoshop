@@ -7,6 +7,7 @@ from django.shortcuts import get_object_or_404, redirect, render, render_to_resp
 from django.template import loader, Context, RequestContext
 from django.utils.translation import ugettext as _
 from django.views.generic import list_detail
+from django.core.paginator import Paginator, InvalidPage
 
 from plata.contact.models import Contact
 from plata.discount.models import Discount
@@ -16,6 +17,18 @@ from django.forms.forms import Form
 from django.http import HttpResponse
 
 from models import Product, ProductCategory
+
+from haystack.query import SearchQuerySet
+from haystack.inputs import AutoQuery
+
+def frontend_context(request): 
+    context = {}
+    context['categories'] = ProductCategory.objects.all()
+    order = shop.order_from_request(request)
+    context['user_order'] = order
+    context['user_contact'] = shop.contact_from_user(request.user)
+    context['user_order_total'] = order.items.count() if order else 0
+    return context
 
 shop = Shop(Contact, Order, Discount)
 
@@ -32,18 +45,58 @@ def extrafields(request, category_id):
         form.fields['extra[%s]' % key] = field
     return HttpResponse(form.as_p())
 
-def frontend_context(): 
-    return {
-        'categories' : ProductCategory.objects.all(),
-    }
+
 
 def product_list(request):
-    print 'asf'
-    return list_detail.object_list(request,
-        queryset = Product.objects.filter(is_active=True),
-        template_name = 'product/list.html',
-        extra_context = frontend_context()
-    )
+    context = {}
+    if request.method == 'POST':
+        order = shop.order_from_request(request, create=True)
+        try:
+            order.modify_item(Product.objects.get(id=request.POST.get('product')), int(request.POST.get('count')))
+            messages.success(request, _('The cart has been updated.'))
+        except ValidationError, e:
+            if e.code == 'order_sealed':
+                [messages.error(request, msg) for msg in e.messages]
+            else:
+                raise
+        return redirect(request.get_full_path())
+
+    results_per_page = 5
+    results = SearchQuerySet()
+    if 'q' in request.GET and request.GET['q']:
+        results = results.filter(text=AutoQuery(request.GET['q']))
+    results = results.load_all()
+    try:
+        page_no = int(request.GET.get('page', 1))
+    except (TypeError, ValueError):
+        raise Http404("Not a valid number for page.")
+
+    if page_no < 1:
+        raise Http404("Pages should be 1 or greater.")
+
+    start_offset = (page_no - 1) * results_per_page
+    results[start_offset:start_offset + results_per_page]
+
+    paginator = Paginator(results, results_per_page)
+
+    try:
+        page = paginator.page(page_no)
+    except InvalidPage:
+        raise Http404("No such page!")
+
+    for result in results:
+        extra = []
+        for key,item in result._object.category.extra_fields.items():
+            extra.append({'label':key, 'value':result._object.extra.get(key, 'ASD') }) 
+        result.extra = extra
+    context['results'] = results
+    context['page'] = page
+    context['search'] = request.GET
+    #print page
+    #Product.objects.filter(is_active=True)
+    return render_to_response('product/list.html', context, context_instance=RequestContext(request))
+
+
 
 class OrderItemForm(forms.Form):
     quantity = forms.IntegerField(label=_('quantity'), initial=1,
@@ -73,7 +126,7 @@ def product_detail(request, object_id):
     else:
         form = OrderItemForm()
     
-    context = frontend_context();
+    context = {};
     context['object'] = product
     context['form'] = form
     return render_to_response('product/detail.html', context, context_instance=RequestContext(request))

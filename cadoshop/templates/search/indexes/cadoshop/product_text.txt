@@ -1,0 +1,6 @@
+{{ object.name }}
+{{ object.description }}
+{{ object.category.name }}
+{% for item in object.extra %}
+	{{item}}
+{% endfor %}

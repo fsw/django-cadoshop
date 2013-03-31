@@ -3,74 +3,23 @@ import sys
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 import simplejson
+from django.forms import fields
 
 from plata.product.models import ProductBase
 from plata.shop.models import PriceBase
-from fields import JSONField
 
 from cadolib.models import Tree, Sluggable
 from mptt.fields import TreeForeignKey
 
 from imagekit.models import ImageSpecField, ProcessedImageField
 from imagekit.processors import ResizeToFill, Adjust
+
 from south.modelsinspector import add_introspection_rules
-from django.forms import fields
+
+from fields import ExtraFieldsDefinition, ExtraFieldsValues
 
 add_introspection_rules([], ["^cadoshop\.models\.ExtraFieldsDefinition"])
 add_introspection_rules([], ["^cadoshop\.models\.ExtraFieldsValues"])
-
-
-        
-class ExtraFieldsDefinition(JSONField):
-    pass 
-    
-class ExtraFieldsValues(JSONField): 
-    pass
-'''
-    __metaclass__ = models.SubfieldBase
-    def db_type(self):
-        return 'text'
-    
-    def get_prep_value(self, value): 
-        if value: 
-            value = simplejson.dumps(value)
-            return value 
-        return None 
-    
-    def to_python(self, value): 
-        if isinstance(value, (str, unicode)): 
-            value = simplejson.loads(value)
-        return value 
-    
-    def formfield(self, **kwargs):
-        print 'FORM FIELD'
-        kwargs.update({'widget': ExtraFieldsDefinitionField})
-        print kwargs
-        return super(ExtraFieldsDefinition, self).formfield(**kwargs)
-    
-    def value_to_string(self, obj):
-        print "VTS"
-        return "asdf"
-
-    
-    __metaclass__ = models.SubfieldBase
-    def db_type(self):
-        return 'text'
-    
-    def get_prep_value(self, value): 
-        if value: 
-            value = simplejson.dumps(value)
-            return value 
-        return None 
-    
-    def to_python(self, value):
-        if isinstance(value, (str, unicode)): 
-            try:
-                value = simplejson.loads(value)
-            except Exception:
-                value = {} 
-        return value 
-'''
 
 class ProductCategory(Tree, Sluggable):
 
@@ -131,6 +80,9 @@ class Product(ProductBase, PriceBase):
     def __unicode__(self):
         return self.name
 
+    def get_price_string(self):
+        return u'%s %.2f' % (self.currency, self.unit_price)
+    
     @models.permalink
     def get_absolute_url(self):
         return ('product_detail', (), {'object_id': self.pk})

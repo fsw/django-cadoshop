@@ -1,3 +1,8 @@
+'''
+This is loosly based on Derek Schaefer's django-json-field:
+https://github.com/derek-schaefer/django-json-field
+'''
+
 from forms import JSONFormField
 
 from django.db import models
@@ -216,4 +221,11 @@ try:
     ]
     add_introspection_rules(rules, ['^json_field\.fields\.JSONField'])
 except ImportError:
+    pass
+
+        
+class ExtraFieldsDefinition(JSONField):
+    pass 
+    
+class ExtraFieldsValues(JSONField): 
     pass
