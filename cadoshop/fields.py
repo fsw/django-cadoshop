@@ -4,6 +4,7 @@ https://github.com/derek-schaefer/django-json-field
 '''
 
 from forms import JSONFormField
+from django.forms import fields
 
 from django.db import models
 from django.utils import simplejson as json
@@ -158,6 +159,12 @@ class JSONField(models.TextField):
 
         super(JSONField, self).__init__(*args, **kwargs)
 
+    def post_decode(self, dict):
+        return dict
+    
+    def pre_encode(self, dict):
+        return dict
+    
     def db_type(self, *args, **kwargs):
         if self._db_type:
             return self._db_type
@@ -168,7 +175,7 @@ class JSONField(models.TextField):
             return None
         if isinstance(value, basestring):
             try:
-                value = json.loads(value, **self.decoder_kwargs)
+                value = self.post_decode(json.loads(value, **self.decoder_kwargs))
             except JSON_DECODE_ERROR:
                 pass
         return value
@@ -176,13 +183,13 @@ class JSONField(models.TextField):
     def get_db_prep_value(self, value, *args, **kwargs):
         if self.null and value is None and not kwargs.get('force'):
             return None
-        return json.dumps(value, **self.encoder_kwargs)
+        return json.dumps(self.pre_encode(value), **self.encoder_kwargs)
 
     def value_to_string(self, obj):
         return self.get_db_prep_value(self._get_val_from_obj(obj))
 
     def value_from_object(self, obj):
-        return json.dumps(super(JSONField, self).value_from_object(obj), **self.encoder_kwargs)
+        return json.dumps(self.pre_encode(super(JSONField, self).value_from_object(obj)), **self.encoder_kwargs)
 
     def formfield(self, **kwargs):
         defaults = {
@@ -225,7 +232,29 @@ except ImportError:
 
         
 class ExtraFieldsDefinition(JSONField):
-    pass 
+    
+    def post_decode(self, dict):
+        
+        for key, field in dict.items():
+            methodToCall = getattr(fields, field.get('class', 'CharField'), fields.CharField)
+            field['formField'] = methodToCall(**field.get('args', {}))
+            methodToCall2 = getattr(models, field.get('class', 'CharField'), models.CharField)
+            field['modelField'] = methodToCall2(**field.get('args', {}))
+            #'CharField','IntegerField','DateField','TimeField','DateTimeField','RegexField',
+            #'EmailField','FileField','ImageField','URLField','BooleanField','ChoiceField',
+            #'MultipleChoiceField','FloatField','DecimalField','SplitDateTimeField','IPAddressField',
+            #'GenericIPAddressField','FilePathField','SlugField','TypedChoiceField','TypedMultipleChoiceField'
+
+        #print 'POSTDECODE'
+        #print dict
+        return dict
+    
+    def pre_encode(self, dict):
+        for key, field in dict.items():
+            del field['formField']
+            del field['modelField']
+        return dict
     
 class ExtraFieldsValues(JSONField): 
     pass
+

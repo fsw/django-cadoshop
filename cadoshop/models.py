@@ -4,6 +4,7 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 import simplejson
 from django.forms import fields
+from django.core.exceptions import ValidationError
 
 from plata.product.models import ProductBase
 from plata.shop.models import PriceBase
@@ -20,6 +21,7 @@ from fields import ExtraFieldsDefinition, ExtraFieldsValues
 
 add_introspection_rules([], ["^cadoshop\.models\.ExtraFieldsDefinition"])
 add_introspection_rules([], ["^cadoshop\.models\.ExtraFieldsValues"])
+
 
 class ProductCategory(Tree, Sluggable):
 
@@ -42,17 +44,16 @@ class ProductCategory(Tree, Sluggable):
 
     def __unicode__(self):
         return self.name
-        
+
+
 class Product(ProductBase, PriceBase):
-    """(Nearly) the simplest product model ever"""
-    
     category = TreeForeignKey(ProductCategory)
     is_active = models.BooleanField(_('is active'), default=True)
     name = models.CharField(_('name'), max_length=100)
     slug = models.SlugField(_('slug'), unique=True)
     ordering = models.PositiveIntegerField(_('ordering'), default=0)
-    extra = ExtraFieldsValues(null=True, blank=True)
     
+    extra = ExtraFieldsValues(null=True, blank=True)
 
     image1 = models.ImageField(verbose_name = _('Image 1'), upload_to='products', blank=True)
     image2 = models.ImageField(verbose_name = _('Image 2'), upload_to='products', blank=True)
@@ -67,6 +68,20 @@ class Product(ProductBase, PriceBase):
                                format='JPEG', options={'quality': 90})
     
     description = models.TextField(_('description'), blank=True)
+
+    def __init__(self, *args, **kwargs):
+        super(Product, self).__init__(*args, **kwargs)
+        temp = {}
+        try:
+            for key, field in self.category.extra_fields.items():
+                try:
+                    temp[key] = field['modelField'].to_python(self.extra[key])
+                except ValidationError:
+                    temp[key] = field['modelField'].get_default();
+        except Exception:
+            pass
+        self.extra = temp
+            
 
     class Meta:
         ordering = ['ordering', 'name']

@@ -23,11 +23,34 @@ from haystack.inputs import AutoQuery
 
 def frontend_context(request): 
     context = {}
-    context['categories'] = ProductCategory.objects.all()
     order = shop.order_from_request(request)
     context['user_order'] = order
     context['user_contact'] = shop.contact_from_user(request.user)
     context['user_order_total'] = order.items.count() if order else 0
+    all_facets = SearchQuerySet().facet('category').facet('tags').facet_counts()['fields']
+    
+    context['tags'] = {}
+    for tag, count in all_facets['tags']:
+        context['tags'][tag] = {'total':count, 'count':count, 'url':'DUPA'}
+    categories_map = {}
+    for category, count in all_facets['category']:
+        categories_map[category] = count
+        
+    categories = ProductCategory.objects.all()
+    context['categories'] = [];
+    for category in categories:
+        category.url = 'DUPA'
+        category.total = categories_map.get(category.slug, 0)
+        category.count = category.total
+        context['categories'].append(category)
+    
+    context['search_params'] = {};
+   
+    for category in context['categories']:
+        print category.url
+    
+    #print request
+    #print context['facet']
     return context
 
 shop = Shop(Contact, Order, Discount)
@@ -36,13 +59,7 @@ def extrafields(request, category_id):
     category = ProductCategory.objects.get(id=category_id)
     form = Form()
     for key, field in category.extra_fields.items():
-        methodToCall = getattr(fields, field.get('class', 'CharField'), fields.CharField)
-        field = fields.CharField(**field.get('args', {}))
-        #'CharField','IntegerField','DateField','TimeField','DateTimeField','RegexField',
-        #'EmailField','FileField','ImageField','URLField','BooleanField','ChoiceField',
-        #'MultipleChoiceField','FloatField','DecimalField','SplitDateTimeField','IPAddressField',
-        #'GenericIPAddressField','FilePathField','SlugField','TypedChoiceField','TypedMultipleChoiceField'
-        form.fields['extra[%s]' % key] = field
+        form.fields['extra[%s]' % key] = field['formField']
     return HttpResponse(form.as_p())
 
 
@@ -63,8 +80,25 @@ def product_list(request):
 
     results_per_page = 5
     results = SearchQuerySet()
+    results = results.facet('category')
+    results = results.facet('tags')
+    #results.facet('tags')
+    
+    context['search_params'] = { key: request.GET.get(key, None) for key in ['q', 'page', 'category', 'tag'] }
+    
     if 'q' in request.GET and request.GET['q']:
         results = results.filter(text=AutoQuery(request.GET['q']))
+    
+    if 'category' in request.GET and request.GET['category']:
+        results = results.filter(category=request.GET['category'])
+        
+    if 'tags' in request.GET and request.GET['tags']:
+        tags = request.GET['tags'].split(',')
+        for tag in tags:
+            results = results.filter(tags=tag)
+    
+    context['facet'] = results.facet_counts()['fields']
+
     results = results.load_all()
     try:
         page_no = int(request.GET.get('page', 1))
