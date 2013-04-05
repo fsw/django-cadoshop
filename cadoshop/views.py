@@ -84,7 +84,7 @@ def product_list(request):
     results = results.facet('tags')
     #results.facet('tags')
     
-    context['search_params'] = { key: request.GET.get(key, None) for key in ['q', 'page', 'category', 'tag'] }
+    context['search_params'] = dict((key, request.GET.get(key, None)) for key in ['q', 'page', 'category', 'tag'] )
     
     if 'q' in request.GET and request.GET['q']:
         results = results.filter(text=AutoQuery(request.GET['q']))
