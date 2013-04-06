@@ -2,6 +2,8 @@ from django import template
 from django.core.urlresolvers import reverse
 import urllib
 register = template.Library()
+import re
+from django.utils.safestring import mark_safe
 
 @register.simple_tag(name="search_url", takes_context=True)
 def get_search_url(context, category=None, tag=None, page=1):
@@ -16,3 +18,12 @@ def get_search_url(context, category=None, tag=None, page=1):
         del urlparams['page']
     
     return reverse('product_list') + '?' + urllib.urlencode(urlparams)
+
+@register.filter
+def urlize_hashtags(value):
+    def repl(m):
+        hashtag = m.group(1)
+        url = reverse('product_list') + '?tags=' + hashtag
+        return '<a href="%s">&#35;%s</a>' % (url, hashtag)
+    hashtag_pattern = re.compile(r'[#]+([-_a-zA-Z0-9]+)')
+    return mark_safe(hashtag_pattern.sub(repl, value))
