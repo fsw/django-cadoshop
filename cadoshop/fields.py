@@ -233,9 +233,10 @@ except ImportError:
         
 class ExtraFieldsDefinition(JSONField):
     
-    def post_decode(self, dict):
-        
-        for key, field in dict.items():
+    def post_decode(self, d):
+        if not isinstance(d, dict):
+            d = {}
+        for key, field in d.items():
             methodToCall = getattr(fields, field.get('class', 'CharField'), fields.CharField)
             field['formField'] = methodToCall(**field.get('args', {}))
             methodToCall2 = getattr(models, field.get('class', 'CharField'), models.CharField)
@@ -247,14 +248,17 @@ class ExtraFieldsDefinition(JSONField):
 
         #print 'POSTDECODE'
         #print dict
-        return dict
+        return d
     
-    def pre_encode(self, dict):
-        for key, field in dict.items():
+    def pre_encode(self, d):
+        if not isinstance(d, dict):
+            d = {}
+        for key, field in d.items():
             del field['formField']
             del field['modelField']
-        return dict
+        return d
     
 class ExtraFieldsValues(JSONField): 
     pass
+
 
