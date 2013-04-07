@@ -131,5 +131,3 @@ class Product(ProductBase, PriceBase):
     def handle_order_item(self, orderitem):
         ProductBase.handle_order_item(self, orderitem)
         PriceBase.handle_order_item(self, orderitem)
-
-

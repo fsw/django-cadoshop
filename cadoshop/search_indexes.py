@@ -1,5 +1,7 @@
 from haystack import indexes
 from models import Product
+from django.db import models
+
 import re
 
 class ProductIndex(indexes.SearchIndex, indexes.Indexable):
@@ -22,17 +24,17 @@ class ProductIndex(indexes.SearchIndex, indexes.Indexable):
         for key, field in object.category.get_extra_model_fields().items():
             h_field = indexes.index_field_from_django_field(field)
             if h_field == indexes.CharField:
-                self.prepared_data['%s_s' % key] = object.extra_fields[key]
+                self.prepared_data['%s_s' % key] = object.extra_fields.get(key, None)
             elif h_field == indexes.DateTimeField:
-                self.prepared_data['%s_dt' % key] = object.extra_fields[key]
+                self.prepared_data['%s_dt' % key] = object.extra_fields.get(key, None)
             elif h_field == indexes.BooleanField:
-                self.prepared_data['%s_b' % key] = object.extra_fields[key]
+                self.prepared_data['%s_b' % key] = object.extra_fields.get(key, None)
             elif h_field == indexes.MultiValueField:
-                self.prepared_data['%s_s' % key] = object.extra_fields[key]
+                self.prepared_data['%s_s' % key] = object.extra_fields.get(key, None)
             elif h_field == indexes.FloatField:
-                self.prepared_data['%s_f' % key] = object.extra_fields[key]
+                self.prepared_data['%s_f' % key] = object.extra_fields.get(key, None)
             elif h_field == indexes.IntegerField:
-                self.prepared_data['%s_i' % key] = object.extra_fields[key]
+                self.prepared_data['%s_i' % key] = object.extra_fields.get(key, None)
             else:
                 raise Exception('unknown type')
             #<dynamicField name="*_l"  type="long" />
@@ -42,3 +44,8 @@ class ProductIndex(indexes.SearchIndex, indexes.Indexable):
             #<dynamicField name="*_p" type="location" />
             
         return self.prepared_data
+    
+def reindex_product(sender, **kwargs):
+    ProductIndex().update_object(kwargs['instance'])
+    
+models.signals.post_save.connect(reindex_product, sender=Product)
