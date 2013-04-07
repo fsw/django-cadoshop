@@ -1,6 +1,5 @@
 var $ = django.jQuery;
 $(function(){
-	
 	if ($('#product_form').length)
 	{
 		$('.field-extra').after('<div id="extraDiv"></div>');
@@ -25,7 +24,8 @@ $(function(){
 			//reset extra data
 			extra = {};
 			$("[name^=extra]").each(function(i, elem){
-				extra[$(elem).attr('name').substring(6, $(elem).attr('name').length-1)] = $(elem).val(); 
+				if($(elem).attr('name') != 'extra')
+					extra[$(elem).attr('name').substring(6, $(elem).attr('name').length-1)] = $(elem).val(); 
 			});
 			$('#id_extra').val(JSON.stringify(extra));
 		});

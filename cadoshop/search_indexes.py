@@ -22,17 +22,17 @@ class ProductIndex(indexes.SearchIndex, indexes.Indexable):
         for key, field in object.category.get_extra_model_fields().items():
             h_field = indexes.index_field_from_django_field(field)
             if h_field == indexes.CharField:
-                self.prepared_data['%s_s' % key] = object.extra[key]
+                self.prepared_data['%s_s' % key] = object.extra_fields[key]
             elif h_field == indexes.DateTimeField:
-                self.prepared_data['%s_dt' % key] = object.extra[key]
+                self.prepared_data['%s_dt' % key] = object.extra_fields[key]
             elif h_field == indexes.BooleanField:
-                self.prepared_data['%s_b' % key] = object.extra[key]
+                self.prepared_data['%s_b' % key] = object.extra_fields[key]
             elif h_field == indexes.MultiValueField:
-                self.prepared_data['%s_s' % key] = object.extra[key]
+                self.prepared_data['%s_s' % key] = object.extra_fields[key]
             elif h_field == indexes.FloatField:
-                self.prepared_data['%s_f' % key] = object.extra[key]
+                self.prepared_data['%s_f' % key] = object.extra_fields[key]
             elif h_field == indexes.IntegerField:
-                self.prepared_data['%s_i' % key] = object.extra[key]
+                self.prepared_data['%s_i' % key] = object.extra_fields[key]
             else:
                 raise Exception('unknown type')
             #<dynamicField name="*_l"  type="long" />

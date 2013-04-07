@@ -61,8 +61,8 @@ class ProductCategory(Tree, Sluggable):
                 args = field.get('args', {}).copy()
                 if 'choices' in args:
                     new_options = []
-                    for key, value in args['choices'].items():
-                        new_options.append((key,value))
+                    for k, v in args['choices'].items():
+                        new_options.append((k,v))
                     args['choices'] = new_options
                 ret[key] = methodToCall(**args)
         return ret
@@ -95,16 +95,15 @@ class Product(ProductBase, PriceBase):
 
     def __init__(self, *args, **kwargs):
         super(Product, self).__init__(*args, **kwargs)
-        temp = {}
+        self.extra_fields = {}
         try:
-            for key, field in self.category.extra_fields.items():
+            for key, field in self.category.get_extra_model_fields().items():
                 try:
-                    temp[key] = field['modelField'].to_python(self.extra[key])
+                    self.extra_fields[key] = field.to_python(self.extra[key])
                 except ValidationError:
-                    temp[key] = field['modelField'].get_default();
+                    self.extra_fields[key] = field.get_default();
         except Exception:
             pass
-        self.extra = temp
             
 
     class Meta:

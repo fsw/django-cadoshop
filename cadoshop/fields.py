@@ -183,7 +183,7 @@ class JSONField(models.TextField):
     def get_db_prep_value(self, value, *args, **kwargs):
         if self.null and value is None and not kwargs.get('force'):
             return None
-        return json.dumps(self.pre_encode(value), indent=4 * ' ', **self.encoder_kwargs)
+        return json.dumps(self.pre_encode(value), **self.encoder_kwargs)
 
     def value_to_string(self, obj):
         return self.get_db_prep_value(self._get_val_from_obj(obj))
