@@ -44,6 +44,30 @@ class ProductCategory(Tree, Sluggable):
 
     def __unicode__(self):
         return self.name
+    
+    def get_extra_form_fields(self):
+        fields = self.get_extra_model_fields();
+        ret = {}
+        for key, field in fields.items():
+            ret[key] = field.formfield()
+        return ret
+            
+    def get_extra_model_fields(self):
+        all_cats = self.get_ancestors(include_self=True)
+        ret = {}
+        for cat in all_cats:
+            for key, field in cat.extra_fields.items():
+                methodToCall = getattr(models, field.get('class', 'CharField'), models.CharField)
+                args = field.get('args', {}).copy()
+                if 'choices' in args:
+                    new_options = []
+                    for key, value in args['choices'].items():
+                        new_options.append((key,value))
+                    args['choices'] = new_options
+                ret[key] = methodToCall(**args)
+        return ret
+
+        
 
 
 class Product(ProductBase, PriceBase):

@@ -31,7 +31,7 @@ def frontend_context(request):
     
     context['tags'] = {}
     for tag, count in all_facets['tags']:
-        context['tags'][tag] = {'total':count, 'count':count, 'url':'DUPA'}
+        context['tags'][tag] = {'total':count, 'count':count}
     categories_map = {}
     for category, count in all_facets['category']:
         categories_map[category] = count
@@ -39,15 +39,11 @@ def frontend_context(request):
     categories = ProductCategory.objects.all()
     context['categories'] = [];
     for category in categories:
-        category.url = 'DUPA'
         category.total = categories_map.get(category.slug, 0)
         category.count = category.total
         context['categories'].append(category)
     
     context['search_params'] = {};
-   
-    for category in context['categories']:
-        print category.url
     
     #print request
     #print context['facet']
@@ -58,8 +54,8 @@ shop = Shop(Contact, Order, Discount)
 def extrafields(request, category_id):
     category = ProductCategory.objects.get(id=category_id)
     form = Form()
-    for key, field in category.extra_fields.items():
-        form.fields['extra[%s]' % key] = field['formField']
+    for key, field in category.get_extra_form_fields().items():
+        form.fields['extra[%s]' % key] = field
     return HttpResponse(form.as_p())
 
 

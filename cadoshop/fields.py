@@ -183,13 +183,13 @@ class JSONField(models.TextField):
     def get_db_prep_value(self, value, *args, **kwargs):
         if self.null and value is None and not kwargs.get('force'):
             return None
-        return json.dumps(self.pre_encode(value), **self.encoder_kwargs)
+        return json.dumps(self.pre_encode(value), indent=4 * ' ', **self.encoder_kwargs)
 
     def value_to_string(self, obj):
         return self.get_db_prep_value(self._get_val_from_obj(obj))
 
     def value_from_object(self, obj):
-        return json.dumps(self.pre_encode(super(JSONField, self).value_from_object(obj)), **self.encoder_kwargs)
+        return json.dumps(self.pre_encode(super(JSONField, self).value_from_object(obj)), indent=4 * ' ', **self.encoder_kwargs)
 
     def formfield(self, **kwargs):
         defaults = {
@@ -232,31 +232,7 @@ except ImportError:
 
         
 class ExtraFieldsDefinition(JSONField):
-    
-    def post_decode(self, d):
-        if not isinstance(d, dict):
-            d = {}
-        for key, field in d.items():
-            methodToCall = getattr(fields, field.get('class', 'CharField'), fields.CharField)
-            field['formField'] = methodToCall(**field.get('args', {}))
-            methodToCall2 = getattr(models, field.get('class', 'CharField'), models.CharField)
-            field['modelField'] = methodToCall2(**field.get('args', {}))
-            #'CharField','IntegerField','DateField','TimeField','DateTimeField','RegexField',
-            #'EmailField','FileField','ImageField','URLField','BooleanField','ChoiceField',
-            #'MultipleChoiceField','FloatField','DecimalField','SplitDateTimeField','IPAddressField',
-            #'GenericIPAddressField','FilePathField','SlugField','TypedChoiceField','TypedMultipleChoiceField'
-
-        #print 'POSTDECODE'
-        #print dict
-        return d
-    
-    def pre_encode(self, d):
-        if not isinstance(d, dict):
-            d = {}
-        for key, field in d.items():
-            del field['formField']
-            del field['modelField']
-        return d
+    pass
     
 class ExtraFieldsValues(JSONField): 
     pass

@@ -19,8 +19,8 @@ class ProductIndex(indexes.SearchIndex, indexes.Indexable):
     def prepare(self, object):
         self.prepared_data = super(ProductIndex, self).prepare(object)
         #print object.extra
-        for key, field in object.category.extra_fields.items():
-            h_field = indexes.index_field_from_django_field(field['modelField'])
+        for key, field in object.category.get_extra_model_fields().items():
+            h_field = indexes.index_field_from_django_field(field)
             if h_field == indexes.CharField:
                 self.prepared_data['%s_s' % key] = object.extra[key]
             elif h_field == indexes.DateTimeField:
