@@ -14,14 +14,7 @@ from mptt.fields import TreeForeignKey
 
 from imagekit.models import ImageSpecField, ProcessedImageField
 from imagekit.processors import ResizeToFill, Adjust
-
-from south.modelsinspector import add_introspection_rules
-
 from fields import ExtraFieldsDefinition, ExtraFieldsValues
-
-add_introspection_rules([], ["^cadoshop\.models\.ExtraFieldsDefinition"])
-add_introspection_rules([], ["^cadoshop\.models\.ExtraFieldsValues"])
-
 
 class ProductCategory(Tree, Sluggable):
 
@@ -77,6 +70,8 @@ class Product(ProductBase, PriceBase):
     slug = models.SlugField(_('slug'), unique=True)
     ordering = models.PositiveIntegerField(_('ordering'), default=0)
     
+    options = models.CharField(_('options'), max_length=512, null=True, blank=True)
+    
     extra = ExtraFieldsValues(null=True, blank=True)
 
     image1 = models.ImageField(verbose_name = _('Image 1'), upload_to='products', blank=True)
@@ -95,6 +90,11 @@ class Product(ProductBase, PriceBase):
 
     def __init__(self, *args, **kwargs):
         super(Product, self).__init__(*args, **kwargs)
+        try:
+            self.options_list = [x.strip() for x in self.options.split(',')]
+        except Exception:
+            self.options_list = []
+        
         self.extra_fields = {}
         try:
             for key, field in self.category.get_extra_model_fields().items():

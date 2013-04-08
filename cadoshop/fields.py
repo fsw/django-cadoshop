@@ -226,7 +226,7 @@ try:
             }
         )
     ]
-    add_introspection_rules(rules, ['^json_field\.fields\.JSONField'])
+    add_introspection_rules(rules, ['^cadoshop\.fields\.JSONField'])
 except ImportError:
     pass
 
@@ -236,5 +236,11 @@ class ExtraFieldsDefinition(JSONField):
     
 class ExtraFieldsValues(JSONField): 
     pass
+
+
+from south.modelsinspector import add_introspection_rules
+
+add_introspection_rules([], ["^cadoshop\.fields\.ExtraFieldsDefinition"])
+add_introspection_rules([], ["^cadoshop\.fields\.ExtraFieldsValues"])
 
 

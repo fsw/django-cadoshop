@@ -6,8 +6,19 @@ from . import models
 from imagekit.admin import AdminThumbnail
 from plata.shop.models import TaxClass
 from django.conf import settings
+from django import forms
+from models import Product
+
+class ProductForm(forms.ModelForm):
+    options = forms.CharField(label=_("Options"), max_length=512,
+        widget=forms.TextInput(attrs={'class': 'vTextField'}),
+        help_text = _("Optional comma separated list"),)
+
+    class Meta:
+        model = Product
 
 class ProductAdmin(admin.ModelAdmin):
+    form = ProductForm
     class Media:
         js = (
                 "/static/cadoshop/productadmin.js",
@@ -20,7 +31,7 @@ class ProductAdmin(admin.ModelAdmin):
     admin_thumbnail = AdminThumbnail(image_field='tiny_thumbnail')
     fieldsets = (
         (None, {
-            'fields': ('name', 'slug', 'category', '_unit_price', 'description', 'is_active')
+            'fields': ('name', 'slug', 'category', '_unit_price', 'description', 'is_active', 'options')
         }),
         ('Extra Fields', {
             'fields': ('extra',)

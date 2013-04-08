@@ -65,7 +65,9 @@ def product_list(request):
     if request.method == 'POST':
         order = shop.order_from_request(request, create=True)
         try:
-            order.modify_item(Product.objects.get(id=request.POST.get('product')), int(request.POST.get('count')))
+            option = request.POST.get('option', None)
+            print option
+            order.modify_item(Product.objects.get(id=request.POST.get('product')), int(request.POST.get('count')), data={'option':option})
             messages.success(request, _('The cart has been updated.'))
         except ValidationError, e:
             if e.code == 'order_sealed':
