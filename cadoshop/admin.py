@@ -37,7 +37,11 @@ class ProductAdmin(admin.ModelAdmin):
             'fields': ('extra',)
         }),
         ('Images', {
-            'fields': ('image1', 'image2', 'image3', 'image4', 'image5')
+            'fields': ('image1', 'image1colors',
+                       'image2', 'image2colors',
+                       'image3', 'image3colors',
+                       'image4', 'image4colors',
+                       'image5', 'image5colors')
         }),
         ('Advanced options', {
             'classes': ('collapse',),

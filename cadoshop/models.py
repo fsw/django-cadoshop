@@ -14,14 +14,14 @@ from mptt.fields import TreeForeignKey
 
 from imagekit.models import ImageSpecField, ProcessedImageField
 from imagekit.processors import ResizeToFill, Adjust
-from fields import ExtraFieldsDefinition, ExtraFieldsValues
+from fields import ExtraFieldsDefinition, ExtraFieldsValues, ColorsField
 
 class ProductCategory(Tree, Sluggable):
 
     name = models.CharField(max_length=100, verbose_name=_('name'))
     active = models.BooleanField(default=True, verbose_name=_('active'))
     
-    thumbnail = ProcessedImageField([ResizeToFill(50, 50)], upload_to='categories', format='JPEG', options={'quality': 90})
+    thumbnail = ProcessedImageField([ResizeToFill(50, 50)], upload_to='categories', format='JPEG', options={'quality': 90}, blank=True)
     description = models.TextField(blank=True, null=True)
     meta_keywords = models.CharField(
         blank=True,
@@ -75,10 +75,15 @@ class Product(ProductBase, PriceBase):
     extra = ExtraFieldsValues(null=True, blank=True)
 
     image1 = models.ImageField(verbose_name = _('Image 1'), upload_to='products', blank=True)
+    image1colors = ColorsField(blank = True)
     image2 = models.ImageField(verbose_name = _('Image 2'), upload_to='products', blank=True)
+    image2colors = ColorsField(blank = True)
     image3 = models.ImageField(verbose_name = _('Image 3'), upload_to='products', blank=True)
+    image3colors = ColorsField(blank = True)
     image4 = models.ImageField(verbose_name = _('Image 4'), upload_to='products', blank=True)
+    image4colors = ColorsField(blank = True)
     image5 = models.ImageField(verbose_name = _('Image 5'), upload_to='products', blank=True)
+    image5colors = ColorsField(blank = True)
     thumbnail = ImageSpecField([ResizeToFill(170, 170)],
                                image_field='image1',
                                format='JPEG', options={'quality': 90})

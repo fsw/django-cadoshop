@@ -13,6 +13,11 @@ from django.utils.timezone import is_aware
 from django.utils.translation import ugettext_lazy as _
 from django.core.exceptions import ImproperlyConfigured
 
+from django import forms
+from django.utils.text import capfirst
+
+from widgets import ColorPickerWidget
+
 import re
 import decimal
 import datetime
@@ -243,4 +248,23 @@ from south.modelsinspector import add_introspection_rules
 add_introspection_rules([], ["^cadoshop\.fields\.ExtraFieldsDefinition"])
 add_introspection_rules([], ["^cadoshop\.fields\.ExtraFieldsValues"])
 
+
+class ColorsField(models.CharField):
+    """
+    A text field made to accept hexadecimal color value (#FFFFFF)
+    with a color picker widget.
+    """
+    def __init__(self, *args, **kwargs):
+        kwargs['max_length'] = 255
+        super(ColorsField, self).__init__(*args, **kwargs)
+
+    def formfield(self, **kwargs):
+        kwargs['widget'] = ColorPickerWidget
+        return super(ColorsField, self).formfield(**kwargs)
+
+try:
+    from south.modelsinspector import add_introspection_rules
+    add_introspection_rules([], ["^cadoshop\.fields\.ColorsField"])
+except ImportError:
+    pass
 
