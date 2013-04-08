@@ -10,7 +10,7 @@ from django import forms
 from models import Product
 
 class ProductForm(forms.ModelForm):
-    options = forms.CharField(label=_("Options"), max_length=512,
+    options = forms.CharField(required=False, label=_("Options"), max_length=512,
         widget=forms.TextInput(attrs={'class': 'vTextField'}),
         help_text = _("Optional comma separated list"),)
 
