@@ -10,27 +10,27 @@ class Migration(SchemaMigration):
     def forwards(self, orm):
         # Adding field 'Product.image1colors'
         db.add_column('cadoshop_product', 'image1colors',
-                      self.gf('cadoshop.fields.ColorField')(default='', max_length=7, blank=True),
+                      self.gf('cadoshop.fields.ColorsField')(default='', max_length=7, blank=True),
                       keep_default=False)
 
         # Adding field 'Product.image2colors'
         db.add_column('cadoshop_product', 'image2colors',
-                      self.gf('cadoshop.fields.ColorField')(default='', max_length=7, blank=True),
+                      self.gf('cadoshop.fields.ColorsField')(default='', max_length=7, blank=True),
                       keep_default=False)
 
         # Adding field 'Product.image3colors'
         db.add_column('cadoshop_product', 'image3colors',
-                      self.gf('cadoshop.fields.ColorField')(default='', max_length=7, blank=True),
+                      self.gf('cadoshop.fields.ColorsField')(default='', max_length=7, blank=True),
                       keep_default=False)
 
         # Adding field 'Product.image4colors'
         db.add_column('cadoshop_product', 'image4colors',
-                      self.gf('cadoshop.fields.ColorField')(default='', max_length=7, blank=True),
+                      self.gf('cadoshop.fields.ColorsField')(default='', max_length=7, blank=True),
                       keep_default=False)
 
         # Adding field 'Product.image5colors'
         db.add_column('cadoshop_product', 'image5colors',
-                      self.gf('cadoshop.fields.ColorField')(default='', max_length=7, blank=True),
+                      self.gf('cadoshop.fields.ColorsField')(default='', max_length=7, blank=True),
                       keep_default=False)
 
 
@@ -61,15 +61,15 @@ class Migration(SchemaMigration):
             'extra': ('cadoshop.fields.ExtraFieldsValues', [], {'default': "'null'", 'null': 'True', 'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'image1': ('django.db.models.fields.files.ImageField', [], {'max_length': '100', 'blank': 'True'}),
-            'image1colors': ('cadoshop.fields.ColorField', [], {'max_length': '7', 'blank': 'True'}),
+            'image1colors': ('cadoshop.fields.ColorsField', [], {'max_length': '7', 'blank': 'True'}),
             'image2': ('django.db.models.fields.files.ImageField', [], {'max_length': '100', 'blank': 'True'}),
-            'image2colors': ('cadoshop.fields.ColorField', [], {'max_length': '7', 'blank': 'True'}),
+            'image2colors': ('cadoshop.fields.ColorsField', [], {'max_length': '7', 'blank': 'True'}),
             'image3': ('django.db.models.fields.files.ImageField', [], {'max_length': '100', 'blank': 'True'}),
-            'image3colors': ('cadoshop.fields.ColorField', [], {'max_length': '7', 'blank': 'True'}),
+            'image3colors': ('cadoshop.fields.ColorsField', [], {'max_length': '7', 'blank': 'True'}),
             'image4': ('django.db.models.fields.files.ImageField', [], {'max_length': '100', 'blank': 'True'}),
-            'image4colors': ('cadoshop.fields.ColorField', [], {'max_length': '7', 'blank': 'True'}),
+            'image4colors': ('cadoshop.fields.ColorsField', [], {'max_length': '7', 'blank': 'True'}),
             'image5': ('django.db.models.fields.files.ImageField', [], {'max_length': '100', 'blank': 'True'}),
-            'image5colors': ('cadoshop.fields.ColorField', [], {'max_length': '7', 'blank': 'True'}),
+            'image5colors': ('cadoshop.fields.ColorsField', [], {'max_length': '7', 'blank': 'True'}),
             'is_active': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
             'options': ('django.db.models.fields.CharField', [], {'max_length': '512', 'null': 'True', 'blank': 'True'}),
