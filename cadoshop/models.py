@@ -49,15 +49,18 @@ class ProductCategory(Tree, Sluggable):
         all_cats = self.get_ancestors(include_self=True)
         ret = {}
         for cat in all_cats:
-            for key, field in cat.extra_fields.items():
-                methodToCall = getattr(models, field.get('class', 'CharField'), models.CharField)
-                args = field.get('args', {}).copy()
-                if 'choices' in args:
-                    new_options = []
-                    for k, v in args['choices'].items():
-                        new_options.append((k,v))
-                    args['choices'] = new_options
-                ret[key] = methodToCall(**args)
+            try:
+                for key, field in cat.extra_fields.items():
+                    methodToCall = getattr(models, field.get('class', 'CharField'), models.CharField)
+                    args = field.get('args', {}).copy()
+                    if 'choices' in args:
+                        new_options = []
+                        for k, v in args['choices'].items():
+                            new_options.append((k,v))
+                        args['choices'] = new_options
+                    ret[key] = methodToCall(**args)
+            except Exception:
+                pass
         return ret
 
         
