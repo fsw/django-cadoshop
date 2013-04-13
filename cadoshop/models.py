@@ -62,28 +62,22 @@ class ProductCategory(Tree, Sluggable):
 
         
 
-
-class Product(ProductBase, PriceBase):
+class Product(PriceBase):
     category = TreeForeignKey(ProductCategory)
+    
     is_active = models.BooleanField(_('is active'), default=True)
     name = models.CharField(_('name'), max_length=100)
     slug = models.SlugField(_('slug'), unique=True)
-    ordering = models.PositiveIntegerField(_('ordering'), default=0)
-    
-    options = models.CharField(_('options'), max_length=512, null=True, blank=True)
-    
+    #ordering = models.PositiveIntegerField(_('ordering'), default=0)
+        
     extra = ExtraFieldsValues(null=True, blank=True)
+    colors = ColorsField(blank = True)
 
     image1 = models.ImageField(verbose_name = _('Image 1'), upload_to='products', blank=True)
-    image1colors = ColorsField(blank = True)
     image2 = models.ImageField(verbose_name = _('Image 2'), upload_to='products', blank=True)
-    image2colors = ColorsField(blank = True)
     image3 = models.ImageField(verbose_name = _('Image 3'), upload_to='products', blank=True)
-    image3colors = ColorsField(blank = True)
     image4 = models.ImageField(verbose_name = _('Image 4'), upload_to='products', blank=True)
-    image4colors = ColorsField(blank = True)
     image5 = models.ImageField(verbose_name = _('Image 5'), upload_to='products', blank=True)
-    image5colors = ColorsField(blank = True)
     thumbnail = ImageSpecField([ResizeToFill(170, 170)],
                                image_field='image1',
                                format='JPEG', options={'quality': 90})
@@ -93,26 +87,11 @@ class Product(ProductBase, PriceBase):
     
     description = models.TextField(_('description'), blank=True)
 
-    def __init__(self, *args, **kwargs):
-        super(Product, self).__init__(*args, **kwargs)
-        try:
-            self.options_list = [x.strip() for x in self.options.split(',')]
-        except Exception:
-            self.options_list = []
-        
-        self.extra_fields = {}
-        try:
-            for key, field in self.category.get_extra_model_fields().items():
-                try:
-                    self.extra_fields[key] = field.to_python(self.extra[key])
-                except ValidationError:
-                    self.extra_fields[key] = field.get_default();
-        except Exception:
-            pass
+
             
 
     class Meta:
-        ordering = ['ordering', 'name']
+        #ordering = ['ordering', 'name']
         verbose_name = _('product')
         verbose_name_plural = _('products')
   
@@ -129,10 +108,50 @@ class Product(ProductBase, PriceBase):
     @models.permalink
     def get_absolute_url(self):
         return ('product_detail', (), {'object_id': self.pk})
-    
-    def get_price(self, *args, **kwargs):
-        return self
+        
+class ProductOption(ProductBase):
+    product = models.ForeignKey(Product)
+    price_mod = models.IntegerField(null=True, blank=True)
+    name = models.CharField(_('name'), max_length=100, blank=True, null=True)
+    extra = ExtraFieldsValues(null=True, blank=True)
+    colors = ColorsField(blank=True, null=True)
 
+    image = models.ImageField(verbose_name = _('Image'), upload_to='products', blank=True)
+    thumbnail = ImageSpecField([ResizeToFill(170, 170)],
+                               image_field='image',
+                               format='JPEG', options={'quality': 90})
+    tiny_thumbnail = ImageSpecField([ResizeToFill(50, 50)],
+                               image_field='image',
+                               format='JPEG', options={'quality': 90})
+    def __unicode__(self):
+        return '%s (%s)' % (self.product.name, self.name)
+
+    def get_price_string(self):
+        return u'%s %.2f' % (self.product.currency, self.product.unit_price)
+    
     def handle_order_item(self, orderitem):
         ProductBase.handle_order_item(self, orderitem)
-        PriceBase.handle_order_item(self, orderitem)
+        PriceBase.handle_order_item(self.product, orderitem)
+
+    def get_price(self, *args, **kwargs):
+        return self.product
+    
+    def __init__(self, *args, **kwargs):
+        super(ProductOption, self).__init__(*args, **kwargs)
+        
+        self.extra_fields = {}
+        try:
+            for key, field in self.product.category.get_extra_model_fields().items():
+                try:
+                    self.extra_fields[key] = field.to_python(self.extra[key])
+                    if not self.extra_fields[key]:
+                        self.extra_fields[key] = field.to_python(self.product.extra[key])
+                        
+                except Exception:
+                    try:
+                        self.extra_fields[key] = field.to_python(self.product.extra[key])
+                    except Exception:
+                        self.extra_fields[key] = field.get_default();
+        except Exception:
+            pass
+        

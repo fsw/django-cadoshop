@@ -7,23 +7,32 @@ from imagekit.admin import AdminThumbnail
 from plata.shop.models import TaxClass
 from django.conf import settings
 from django import forms
-from models import Product
+from models import Product, ProductOption
 
 class ProductForm(forms.ModelForm):
-    options = forms.CharField(required=False, label=_("Options"), max_length=512,
-        widget=forms.TextInput(attrs={'class': 'vTextField'}),
-        help_text = _("Optional comma separated list"),)
 
     class Meta:
         model = Product
 
+class ProductOptionInline(admin.TabularInline):
+    model = ProductOption
+    extra = 0
+    fieldsets = (
+        (
+         None, 
+         {
+            'fields': ('name', 'price_mod', 'extra', 'colors', 'image')
+            }
+        ),
+    )
+    
 class ProductAdmin(admin.ModelAdmin):
     form = ProductForm
     class Media:
         js = (
                 "/static/cadoshop/productadmin.js",
             )
-    list_display = ('category', 'admin_thumbnail', 'name', '_unit_price', 'is_active', 'ordering')
+    list_display = ('category', 'admin_thumbnail', 'name', '_unit_price', 'is_active')
     list_display_links = ('name',)
     list_filter = ('is_active',)
     prepopulated_fields = {'slug': ('name',)}
@@ -31,24 +40,22 @@ class ProductAdmin(admin.ModelAdmin):
     admin_thumbnail = AdminThumbnail(image_field='tiny_thumbnail')
     fieldsets = (
         (None, {
-            'fields': ('name', 'slug', 'category', '_unit_price', 'description', 'is_active', 'options')
+            'fields': ('name', 'slug', 'category', '_unit_price', 'description', 'is_active', 'colors')
         }),
         ('Extra Fields', {
             'fields': ('extra',)
         }),
         ('Images', {
-            'fields': ('image1', 'image1colors',
-                       'image2', 'image2colors',
-                       'image3', 'image3colors',
-                       'image4', 'image4colors',
-                       'image5', 'image5colors')
+            'fields': ('image1','image2','image3','image4','image5')
         }),
         ('Advanced options', {
             'classes': ('collapse',),
-            'fields': ('currency', 'tax_included', 'tax_class', 'ordering')
+            'fields': ('currency', 'tax_included', 'tax_class')
         }),
     )
     radio_fields = {'tax_class': admin.HORIZONTAL, 'currency': admin.HORIZONTAL}
+    
+    inlines = (ProductOptionInline, )
     
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "tax_class":
@@ -59,8 +66,19 @@ class ProductAdmin(admin.ModelAdmin):
         if db_field.name == "currency":
             kwargs["initial"] = settings.CURRENCIES[0]
         return super(ProductAdmin, self).formfield_for_choice_field(db_field, request, **kwargs)
-
     
+    def save_form(self, request, form, change):
+        #print form
+        #print 'ASDASD'
+        return form.save(commit=False)
+    
+    def save_model(self, request, obj, form, change):
+        #print obj.values()
+        obj.save()
+        
+    def save_formset(self, request, form, formset, change):
+        #print 'FS'
+        formset.save()
     
 class ProductCategoryAdmin(MPTTModelAdmin):
     prepopulated_fields = {'slug': ('name',)}

@@ -1,0 +1,6 @@
+{{ object.product.name }}
+{{ object.product.description }}
+{{ object.product.category.name }}
+{% for item in object.product.extra %}
+	{{item}}
+{% endfor %}

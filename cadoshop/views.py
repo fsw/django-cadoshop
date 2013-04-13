@@ -16,9 +16,12 @@ from plata.shop.models import Order
 from django.forms.forms import Form
 from django.http import HttpResponse
 
-from models import Product, ProductCategory
+from models import Product, ProductCategory, ProductOption
 
 from haystack.query import SearchQuerySet
+
+from search.solr_grouping_backend import GroupedSearchQuerySet
+
 from haystack.inputs import AutoQuery
 
 def frontend_context(request): 
@@ -67,7 +70,7 @@ def product_list(request):
         try:
             option = request.POST.get('option', None)
             print option
-            order.modify_item(Product.objects.get(id=request.POST.get('product')), int(request.POST.get('count')), data={'option':option})
+            order.modify_item(ProductOption.objects.get(id=request.POST.get('product')), int(request.POST.get('count')))
             messages.success(request, _('The cart has been updated.'))
         except ValidationError, e:
             if e.code == 'order_sealed':
@@ -77,9 +80,11 @@ def product_list(request):
         return redirect(request.get_full_path())
 
     results_per_page = 5
-    results = SearchQuerySet()
+    results = GroupedSearchQuerySet()
     results = results.facet('category')
     results = results.facet('tags')
+    results = results.group_by('product')
+    #results2 = GroupedSearchQuerySet()
     #results.facet('tags')
     
     context['search_params'] = dict((key, request.GET.get(key, None)) for key in ['q', 'page', 'category', 'tag'] )
@@ -116,11 +121,12 @@ def product_list(request):
     except InvalidPage:
         raise Http404("No such page!")
 
-    for result in results:
-        extra = []
-        for key,item in result._object.category.extra_fields.items():
-            extra.append({'label':key, 'value':result._object.extra.get(key, 'ASD') }) 
-        result.extra = extra
+    #for result in results:
+    #    extra = []
+    #    for key,item in result._object.category.extra_fields.items():
+    #        extra.append({'label':key, 'value':result._object.extra.get(key, 'ASD') }) 
+    #    result.extra = extra
+    
     context['results'] = results
     context['page'] = page
     context['search'] = request.GET

@@ -1,33 +1,47 @@
 var $ = django.jQuery;
 $(function(){
-	if ($('#product_form').length)
-	{
-		$('.field-extra').after('<div id="extraDiv"></div>');
-		$('.field-extra').hide();
-		var extra = JSON.parse($('#id_extra').val());
-		
-		$('#id_category').change(function(){
-			$.get('/extrafields/' + $(this).val(), {}, function(data){
-				$('#extraDiv').html(data);
-				for (key in extra)
-				{
-					$("[name=extra\[" + key + "\]]").val(extra[key]);
-				}
-				$("[name^=extra]").change(function(i, elem){
-					extra[$(elem).attr('name').substring(6, $(elem).attr('name').length-1)] = $(elem).val(); 
-				});
-			}, 'html');
-		})
-		
-		$('#id_category').change();
-		$('#product_form').submit(function(){
-			//reset extra data
-			extra = {};
-			$("[name^=extra]").each(function(i, elem){
+	
+	function saveExtra(){
+		$('.extraFormDiv').each(function(){
+			var extra = {};
+			$(this).find("[name^=extra]").each(function(i, elem){
 				if($(elem).attr('name') != 'extra')
 					extra[$(elem).attr('name').substring(6, $(elem).attr('name').length-1)] = $(elem).val(); 
 			});
-			$('#id_extra').val(JSON.stringify(extra));
+			$(this).parents('.field-extra').find('textarea').first().val(JSON.stringify(extra));
 		});
+	}
+	
+	function loadExtra(){
+		$('.extraFormDiv').each(function(){
+			var extra = JSON.parse($(this).parents('.field-extra').find('textarea').first().val());
+			for (key in extra)
+			{
+				$(this).find("[name=extra\[" + key + "\]]").val(extra[key]);
+			}
+		});
+	}
+
+	if ($('#product_form').length)
+	{
+		$('.field-extra').each(function(){
+			extraDiv = $('<div class="extraFormDiv"></div>');
+			$(this).append(extraDiv);
+			$(this).children().first().hide();
+		});
+		
+		
+		$('#id_category').change(function(){
+			$.get('/extrafields/' + $(this).val(), {}, function(data){
+				$('.extraFormDiv').each(function(){
+					$(this).html(data);
+					$(this).find("[name^=extra]").change(function(){
+						saveExtra();
+					});
+				});
+				loadExtra();
+			}, 'html');
+		})
+		$('#id_category').change();
 	}
 })
