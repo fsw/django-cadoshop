@@ -6,7 +6,8 @@
 	<title>{% block title %}Koncept Odzież{% endblock %}</title>
 	{% load compress %}
 	{% compress css %}
-	<link rel="stylesheet" href="{{ STATIC_URL }}style.scss" type="text/x-scss" charset="utf-8">
+	<link rel="stylesheet" href="{{STATIC_URL}}cadoshop.scss" type="text/x-scss" charset="utf-8">
+	<link rel="stylesheet" href="{{ STATIC_URL }}cadoshop/jquery.fancybox.css" type="text/css" charset="utf-8">
 	{% endcompress %}
 </head>
 <body>
@@ -14,26 +15,26 @@
 	<header>
 		<div id="top">
 			<div id="topLogo">
-				Koncept odzież
+				<img src="{{STATIC_URL}}sitelogo.png" alt="Koncept odzież"/>
 			</div>
-			<div id="topLinks">
-				<ul id="topNavigation">
-					<a href="/products/"><span>{% trans "Products" %}</span></a>
-					<a href="/cart/"><span>{% trans "Cart" %}</span></a>
-				</ul>
-				<ul id="top">
-					
-				</ul>
+			<ul id="topNavigation">
+				<li><a href="/products/">{% trans "Products" %}</a></li>
+				<li><a href="{% url "plata_shop_cart" %}">{% trans "Cart" %}</a></li>
+			</ul>
+			<div id="topContact">
+				kontakt@koncept-odziez.com <br/>
+				600-269-261 <br/>
+				87-100 Toruń, ul. Barwna 1
 			</div>
+			
 		</div>
 		<div id="bar">
 			<ul id="barMenu">
-				<li><a href="/">{% trans "Home" %}</a></li>
-				<li><a href="/">{% trans "Products" %}</a>
-				<ul>
+				<li><a href="/">{% trans "Start" %}</a></li>
+				<!-- <li><a href="/products/">{% trans "Products" %}</a><ul> -->
 				    {% recursetree categories %}
 				        <li>
-				            {{ node.name }}
+				            <a href="/products/?category={{ node.slug }}">{{ node.name }}</a>
 				            {% if not node.is_leaf_node %}
 				                <ul class="children">
 				                    {{ children }}
@@ -41,19 +42,24 @@
 				            {% endif %}
 				        </li>
 				    {% endrecursetree %}
-				</ul>
-				</li>
+				<!-- </ul></li> -->
 			</ul>
-			<div id="barSearch">
-			</div>
+			<form id="barSearch" method="get" action="">
+				<div class="fakeinput">
+			        <input id="q" type="text" value="" name="q" autocomplete="off" placeholder="Search"/>
+			   		<input class="icon" type="image" value="Go" src="{{ STATIC_URL }}icons/search.png"/> 
+				</div>
+			</form>
 		</div>
 	</header>
-	<div id="breadcrumbs">
-		<a href="/"><span>{% trans "Home" %}</span></a>
-		<a href="/products/"><span>{% trans "Products" %}</span></a>
-		<a href="/cart/"><span>{% trans "Cart" %}</span></a>
-		<br style="clear:left" />
-	</div>
+	
+	{% block breadcrumbs %}
+	<ul id="breadcrumbs">
+		<li><a href="/">{% trans "Home" %}</a></li>
+		<li><a href="/">{% trans "Home" %}</a></li>
+		<li><span>{% trans "Home" %}</span></li>
+	</ul>
+	{% endblock %}
 	
 	{% if messages %}
 	<ul class="messages">
@@ -63,40 +69,75 @@
 	</ul>
 	{% endif %}
 
+	{% block sidebar %}
+	<div id="sidebar">
+		<!-- 
+		<div class="widget">
+			<h2>asdfadsfad</h2>
+			asdasd
+		</div>
+		 -->
+		 
+		<div class="widget">
+			<h2>{% trans "Your shopping cart" %}</h2>
+			<table style="width:100%">
+			    <tr>
+			        <td colspan="2">
+						<b>Order {{ user_order }}</b>,
+						{{ user_order.currency }} {{ user_order.total|floatformat:2 }}
+					</td>
+			    </tr>
+			    <tr>
+			        <td colspan="2">
+			            <ul>
+			                {% for item in user_order.items.all %}
+			                <!-- {{ item.product.get_absolute_url }}"-->
+			                <li>{{ item }}</li>
+			                {% endfor %}
+			            </ul>
+			       	</td>
+			    </tr>
+			    <tr>
+			        <th>{% trans "User" %}</th>
+			        <td>{{ user }}</td>
+			    </tr>
+			    <tr>
+			        <th>{% trans "Contact" %}</th>
+			        <td>{{ user_contact }}</td>
+			    </tr>
+			    <tr>
+			        <td colspan="2">
+			        {% if user_order_total %}
+			            {% if user_order.id %}
+			            	{% url "plata_reporting_invoice_pdf" user_order.id as invoice_url %}
+			            	{% if invoice_url %}<a href="{{ invoice_url }}">Invoice</a>, {% endif %}
+			            {% endif %}
+			            <a href="{% url "plata_shop_cart" %}">Full cart</a>,
+			            <a href="{% url "plata_shop_checkout" %}">Checkout</a>
+			        {% endif %}
+			        </td>
+			    </tr>
+			</table>
+		</div>
+	</div>
+	{% endblock %}
+	
+	<div id="content">
+	{% block before %}
+	{% endblock %}
 	{% block content %}
 	{% endblock %}
-
-<hr />
-<a href="{% url "plata_shop_cart" %}">{% trans "Go to cart" %}</a>
-<hr />
-<h2>{% trans "That's what we know about you:" %}</h2>
-<table>
-    <tr>
-        <th>{% trans "User" %}</th>
-        <td>{{ user }}</td>
-    </tr>
-    <tr>
-        <th>{% trans "Contact" %}</th>
-        <td>{{ plata.contact }}</td>
-    </tr>
-    <tr>
-        <th>{% trans "Order" %}</th>
-        <td>
-            {{ plata.order }}, {{ plata.order.currency }} {{ plata.order.total|floatformat:2 }}
-            <ul>
-                {% for item in plata.order.items.all %}
-                <li><a href="{{ item.product.get_absolute_url }}">{{ item }}</a></li>
-                {% endfor %}
-            </ul>
-            {% if plata.order.id %}
-            {% url "plata_reporting_invoice_pdf" plata.order.id as invoice_url %}
-            {% if invoice_url %}<a href="{{ invoice_url }}">Invoice</a>{% endif %}
-            {% endif %}
-            {% url "plata_reporting_product_xls" as product_xls_url %}
-            {% if product_xls_url %}<a href="{{ product_xls_url }}">Products</a>{% endif %}
-        </td>
-    </tr>
-</table>
+	{% block after %}
+	{% endblock %}
+	</div>
 </div>
+<div id="footer">
+Koncept Odzież &copy; {% now "Y" %}
+&nbsp; &nbsp; &nbsp;
+powered by <a href="http://github.com/fsw/django-cadoshop">CadoShop</a>
+</div>
+	<script type='text/javascript' src="{{ STATIC_URL }}cadoshop/jquery-1.9.1.min.js"></script>
+	<script type='text/javascript' src="{{ STATIC_URL }}cadoshop/jquery.fancybox.js"></script>
+	<script type='text/javascript' src="{{ STATIC_URL }}cadoshop/products.js"></script>
 </body>
 </html>

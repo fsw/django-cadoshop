@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block title %}{{ staticpage.title }} - {{ block.super }}{% endblock %}
+
+{% block breadcrumbs %}
+<ul id="breadcrumbs">
+	<li><span>{{ staticpage.title }}</span></li>
+</ul>
+{% endblock %}
+	
+{% block content %}
+
+<h1>{{ staticpage.title }}</h1>
+
+{{ staticpage.content|safe }}
+
+{% endblock %}
+
+{% block seo_title %}{{ staticpage.seo_title }}{% endblock %}
+
+{% block seo_description %}{{ staticpage.seo_description }}{% endblock %}
+
+{% block seo_keywords %}{{ staticpage.seo_keywords }}{% endblock %}

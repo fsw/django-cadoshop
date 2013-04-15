@@ -1,16 +1,139 @@
 {% extends "base.html" %}
 
 {% load i18n %}
+{% load cadoshop_tags %}
 
 {% block title %}{% trans "Products" %} - {{ block.super }}{% endblock %}
 
+
+{% block before %}
+	{% block after %}
+		<div class="pagination">
+	        <div>
+	        	{% if page.has_previous %}
+	        		<a href="?q={{ query }}&amp;page={{ page.previous_page_number }}">
+	            {% else %}
+	            	<span>
+	        	{% endif %}
+	        		&laquo; Previous
+	        	{% if page.has_previous %}
+	        		</a>
+	            {% else %}
+	            	</span>
+	        	{% endif %}
+	        		|
+					page <strong>{{page.number}}</strong> of <strong>{{page.paginator.num_pages}}</strong>
+					|
+	            {% if page.has_next %}
+	            	<a href="?q={{ query }}&amp;page={{ page.next_page_number }}">
+	            {% else %}
+	            	<span>
+	            {% endif %}
+	            	Next &raquo;
+	            {% if page.has_next %}
+	            	</a>
+	            {% else %}
+	            	</span>
+	            {% endif %}
+	            &nbsp; &nbsp; &nbsp;
+	            total items: <strong>{{page.paginator.count}}</strong>
+	        </div>
+		</div>
+	{% endblock %}
+{% endblock %}
+
 {% block content %}
-<h1>{% trans "Products" %}</h1>
-
-{% for product in items %}
-<h2><a href="{{ product.get_absolute_url }}">{{ product }}</a></h2>
-{{ product.description|linebreaks }}
-{% endfor %}
-
-{% include "_pagination.html" %}
+	
+	{% for group in page.object_list %}
+		<div class="product">
+			<!-- {{ product.get_absolute_url }} -->
+			{% for document in group.documents %}
+				<div class="thumbnail option{{forloop.counter}} optionPer">
+					{% if document.object.image %}
+		            	<a rel="gallery{{document.object.product.id}}" href="{{ document.object.image.url }}" class="fancybox">
+		            		<img width="170" height="170" src="{{ document.object.thumbnail.url }}"/>
+						</a>
+					{% elif document.object.product.image1 %}
+		            	<a rel="gallery{{document.object.product.id}}" href="{{ document.object.product.image1.url }}" class="fancybox">
+		            		<img width="170" height="170" src="{{ document.object.product.thumbnail.url }}"/>
+						</a>
+					{% else %}
+						<img width="170" height="170" src="/static/img/no_photo.png">
+					{% endif %}
+				</div>
+			{% endfor %}
+			<div class="hidden">
+           		{% if document.object.product.image1 %}
+				<a rel="gallery{{document.object.product.id}}" href="{{ document.object.product.image1.url }}" class="fancybox">
+            		<img src="{{ document.object.thumbnail.url }}"/>
+				</a>
+				{% endif %}
+				{% if document.object.product.image2 %}
+				<a rel="gallery{{document.object.product.id}}" href="{{ document.object.product.image2.url }}" class="fancybox">
+            		<img src="{{ document.object.thumbnail.url }}"/>
+				</a>
+				{% endif %}
+				{% if document.object.product.image3 %}
+				<a rel="gallery{{document.object.product.id}}" href="{{ document.object.product.image3.url }}" class="fancybox">
+            		<img src="{{ document.object.thumbnail.url }}"/>
+				</a>
+				{% endif %}
+				{% if document.object.product.image4 %}
+				<a rel="gallery{{document.object.product.id}}" href="{{ document.object.product.image4.url }}" class="fancybox">
+            		<img src="{{ document.object.thumbnail.url }}"/>
+				</a>
+				{% endif %}
+				{% if document.object.product.image5 %}
+				<a rel="gallery{{document.object.product.id}}" href="{{ document.object.product.image5.url }}" class="fancybox">
+            		<img src="{{ document.object.thumbnail.url }}"/>
+				</a>
+				{% endif %}
+			</div>
+			
+			<div class="desc">
+				<h2>{{ group.documents.0.object.product.name }}</h2>
+		    	{{ group.documents.0.object.product.description|urlize_hashtags|linebreaks }}
+		    	
+					{% for document in group.documents %}
+		    			<div class="optionPer option{{forloop.counter}}">
+				    	{% for key, item in document.object.extra_fields.items %}
+					    	{{key}}: &nbsp; <strong>{{item}}</strong><br/>
+				    	{% endfor %}
+		    			</div>
+					{% endfor %}
+		    </div>
+		    
+			<div class="actions">
+			{% if group.documents|length > 1 %}
+				<select class="optionSelect">
+				{% for document in group.documents %}
+					<option value="{{forloop.counter}}">{{document.object.name}}</option>
+				{% endfor %}
+				</select>
+			{% endif %}
+				
+				    				
+			{% for document in group.documents %}
+				<form action="" class="optionPer option{{forloop.counter}}" method="post">
+					{% csrf_token %}
+					<div>
+						<div>
+							{% with price=document.object.get_price %}
+       							<strong>
+       								{{ price.get_price_string }}
+       							</strong>
+   							{% endwith %}
+						</div>
+						<div>
+							count: <input type="number" size="3" name="count" value="1"/>
+							<br/>
+							<input type="hidden" name="product" value="{{ document.object.id }}"/>
+							<input type="submit" value="Add to cart"/>
+						</div>
+					</div>
+				</form>
+			{% endfor %}
+			</div>
+		</div>
+	{% endfor %}
 {% endblock %}

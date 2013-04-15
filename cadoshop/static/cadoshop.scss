@@ -1,0 +1,264 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+.hidden {
+	display: none;
+}
+
+body {
+    background: none repeat scroll 0 0 #E0E0E0;
+    color: #444444;
+    font: 12px arial, helvetica, sans-serif;
+}
+
+#top {
+	margin-top: 5px;
+	overflow: auto;
+}
+#topLogo {
+	float: left;
+	margin: 20px;
+	height: 50px;
+}
+
+#topNavigation {
+	float: right;
+	margin: 20px;
+	list-style-type: none;
+	overflow: auto;
+}
+
+#topNavigation li {
+	float: left;
+	margin: 2px 0;
+	border-left: 1px solid #aaa;
+}
+
+#topNavigation li:first-child {
+	border: none;
+}
+
+#topNavigation li a {
+	color: #999;
+	text-decoration: none;
+	display: block;
+	padding: 0px 10px;
+}
+
+#topNavigation a:hover {
+	color: #333;
+}
+
+#topContact {
+	float: right;
+	margin: 20px;
+	margin-right: 120px;
+	color: #777;
+	line-height: 16px;
+}
+
+#page {
+    width: 1000px;
+	background-color: #FFFFFF;
+    border-color: #aaa;
+    border-style: solid;
+    border-width: 0 1px 1px;
+	box-shadow: 0px 0px 5px 6px #aaa;
+    margin: 0 auto 20px;
+    text-align: left;
+    overflow: auto;
+}
+
+#footer {
+	width: 1000px;
+	margin: 0 auto 20px;
+    text-align: right;
+    color: #aaa;
+}
+
+#footer a {
+	color: #aaa;
+}
+
+#bar {
+	background: #333;
+	color: white;
+	overflow: visible;
+	height: 44px;
+	margin-bottom: 7px;
+	padding: 0 20px;
+}
+
+#barMenu {
+	float: left;
+	padding: 7px 0;
+	width:500px;
+}
+
+#bar ul {
+	list-style-type: none;
+}
+
+#barMenu > li {
+	float: left;
+	border-left: 1px solid #555;
+	margin: 0;
+}
+
+#barMenu > li:first-child {
+	border: none;
+}
+
+#barMenu a {
+	color: #ffffff;
+	font-size: 17px;
+	padding: 3px 12px 3px 12px;
+	text-decoration: none;
+	display: block;
+	font-weight: bold;
+}
+
+#barMenu li {
+    position: relative;
+    line-height: 24px;
+}
+
+#barMenu ul {
+    box-shadow: 0 3px 3px rgba(0, 0, 0, 0.2);
+    display: none;
+    float: left;
+    left: 0;
+    margin: 0;
+    position: absolute;
+    top: 30px;
+    width: 188px;
+    z-index: 99999;
+	margin:0;
+	background-color: #333;
+	height: auto;
+}
+#barMenu ul ul {
+    left: 100%;
+    top: 0;
+}
+
+#barMenu ul a {
+    border-bottom: 1px solid #555;
+    height: auto;
+    line-height: 1.5em;
+	display:block;
+}
+
+#barMenu li:hover > a, #barMenu a:focus, #barMenu a:hover {
+    background-color: #888;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+    color: #333;
+    text-decoration: none;
+}
+
+#barMenu li:hover > ul {
+    display: block;
+}
+
+
+
+#barSearch {
+	float: right;
+	padding: 7px;
+}
+
+#barSearch .fakeinput {
+	background: white;
+	overflow: auto;
+	border-radius: 7px;
+	height: 30px;
+}
+
+#barSearch input#q {
+	padding: 5px 10px;
+    background: none repeat scroll 0 0 transparent;
+    border: medium none;
+    float: left;
+    width: 120px;
+    line-height: 20px;
+    height: 30px;
+}
+
+#barSearch input.icon {
+	padding: 4px;
+    float: right;
+}
+
+#breadcrumbs {
+	border-bottom: 2px solid #ddd;
+	margin: 10px;
+	padding-bottom: 5px;
+	list-style-type: none;
+	overflow: auto;
+	padding-left: 20px;
+}
+
+#breadcrumbs li {
+	float: left;
+	margin-right: 20px;
+}
+
+
+#sidebar {
+	margin: 5px 20px;
+	width: 240px;
+	float: right;
+}
+
+#content {
+	margin: 5px 20px;
+	width: 680px;
+	float: left;
+}
+
+#sidebar .widget {
+	margin-bottom: 30px;
+	border: 1px solid #ddd;
+	border-radius: 10px;
+	box-shadow: 0px 0px 2px #aaa;
+}
+
+#sidebar .widget h2 {
+	background-color: #333;
+	color: white;
+	padding: 5px 12px;
+	border-top-right-radius: 10px;
+	border-top-left-radius: 10px;
+	margin-bottom: 10px;
+}
+
+.pagination {
+    background-color: #EEE;
+    border-top: 1px solid #DDD;
+    font-size: 11px;
+    padding: 3px 8px;
+ }
+ 
+.product {
+ 	border-bottom: 1px solid #DDD;
+    padding: 10px;
+    overflow: auto;
+}
+ 
+.product .thumbnail {
+	width: 170px;
+	float: left;
+}
+
+.product .desc {
+	width: 320px;
+	float: left;
+	padding: 10px;
+}
+
+.product .actions {
+	width: 150px;
+	float: right;
+}
