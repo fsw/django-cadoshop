@@ -7,7 +7,7 @@ import re
 class ProductOptionIndex(indexes.SearchIndex, indexes.Indexable):
     text = indexes.CharField(document=True, use_template=True)
     tags = indexes.MultiValueField(faceted=True)
-    category = indexes.CharField(model_attr='product__category__slug', faceted=True)
+    category = indexes.MultiValueField(faceted=True)
     product = indexes.IntegerField(model_attr='product__id')
     
     price = indexes.FloatField()
@@ -22,6 +22,13 @@ class ProductOptionIndex(indexes.SearchIndex, indexes.Indexable):
     
     def prepare_tags(self, obj):
         return re.findall(r'[#]+([-_a-zA-Z0-9]+)', obj.product.description)
+    
+    def prepare_category(self, obj):
+        path = obj.product.category.get_ancestors(include_self=True)
+        ret = []
+        for category in path:
+            ret.append(category.slug)
+        return ret
     
     def prepare_price(self, obj):
         return obj.product._unit_price
