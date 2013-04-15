@@ -7,6 +7,18 @@
 	display: none;
 }
 
+.clear {
+	clear: both;
+}
+
+.left {
+	float: left;
+}
+
+.right {
+	float: right;
+}
+
 body {
     background: none repeat scroll 0 0 #E0E0E0;
     color: #444444;
@@ -68,7 +80,7 @@ body {
 	box-shadow: 0px 0px 5px 6px #aaa;
     margin: 0 auto 20px;
     text-align: left;
-    overflow: auto;
+    overflow: hidden;
 }
 
 #footer {
@@ -216,6 +228,7 @@ body {
 	margin: 5px 20px;
 	width: 680px;
 	float: left;
+	min-height: 600px;
 }
 
 #sidebar .widget {
