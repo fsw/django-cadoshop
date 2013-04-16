@@ -89,11 +89,21 @@ def product_list(request):
     
     context['search_params'] = dict((key, request.GET.get(key, None)) for key in ['q', 'page', 'category', 'tag'] )
     
-    if 'q' in request.GET and request.GET['q']:
-        results = results.filter(text=AutoQuery(request.GET['q']))
+    context['breadcrumbs'] = [('/products/', 'All Products')] 
     
     if 'category' in request.GET and request.GET['category']:
         results = results.filter(category=request.GET['category'])
+        category = ProductCategory.objects.get(slug=request.GET['category'])
+        path = category.get_ancestors(include_self=True)
+        for category in path:
+            context['breadcrumbs'].append((category.slug, category.name))
+    
+    #context['breadcrumbs']
+        
+    if 'q' in request.GET and request.GET['q']:
+        results = results.filter(text=AutoQuery(request.GET['q']))
+        context['breadcrumbs'].append(('', 'Search Results'))
+    
         
     if 'tags' in request.GET and request.GET['tags']:
         tags = request.GET['tags'].split(',')
@@ -105,6 +115,9 @@ def product_list(request):
     results = results.load_all()
     try:
         page_no = int(request.GET.get('page', 1))
+        if (page_no > 1):
+            context['breadcrumbs'].append(('', 'Page %d' % page_no))
+            
     except (TypeError, ValueError):
         raise Http404("Not a valid number for page.")
 

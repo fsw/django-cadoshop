@@ -18,11 +18,12 @@
 				<img src="{{STATIC_URL}}sitelogo.png" alt="Koncept odzież"/>
 			</div>
 			<ul id="topNavigation">
-				<li><a href="/products/">{% trans "Products" %}</a></li>
+				<li><a href="/contact/">{% trans "Contact" %}</a></li>
+				<li><a href="/terms/">{% trans "Terms and Conditions" %}</a></li>
 				<li><a href="{% url "plata_shop_cart" %}">{% trans "Cart" %}</a></li>
 			</ul>
 			<div id="topContact">
-				kontakt@koncept-odziez.com <br/>
+				kontakt@<span style="display:none;">null</span>koncept-odziez.com <br/>
 				600-269-261 <br/>
 				87-100 Toruń, ul. Barwna 1
 			</div>
@@ -54,7 +55,6 @@
 	
 	{% block breadcrumbs %}
 	<ul id="breadcrumbs">
-		<li><a href="/">{% trans "Home" %}</a></li>
 		<li><a href="/">{% trans "Home" %}</a></li>
 		<li><span>{% trans "Home" %}</span></li>
 	</ul>
@@ -129,7 +129,20 @@
 	{% block after %}
 	{% endblock %}
 	</div>
-	<div class="clear"></div>
+	<div id="categoriesmap" class="clear">
+	<ul>
+		{% recursetree categories %}
+		    <li>
+		        <a href="/products/?category={{ node.slug }}">{{ node.name }}</a>
+		        {% if not node.is_leaf_node %}
+		            <ul class="children">
+		                {{ children }}
+		            </ul>
+		        {% endif %}
+		    </li>
+		{% endrecursetree %}
+	</ul>
+	</div>
 </div>
 <div id="footer">
 Koncept Odzież &copy; {% now "Y" %}

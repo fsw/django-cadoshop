@@ -5,7 +5,18 @@
 
 {% block title %}{% trans "Products" %} - {{ block.super }}{% endblock %}
 
-
+{% block breadcrumbs %}
+	<ul id="breadcrumbs">
+		{% for url, name in breadcrumbs %}
+			{% if url %}
+			<li><a href="{{url}}">{{ name }}</a></li>
+			{% else %}
+			<li><span>{{ name }}</span></li>
+			{% endif %}
+		{% endfor %}
+	</ul>
+{% endblock %}
+	
 {% block before %}
 	{% block after %}
 		<div class="pagination">

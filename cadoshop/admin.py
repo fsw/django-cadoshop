@@ -9,6 +9,11 @@ from django.conf import settings
 from django import forms
 from models import Product, ProductOption
 
+from django.forms.models import inlineformset_factory
+from django.contrib.admin.util import flatten_fieldsets
+from django.utils.functional import curry
+
+
 class ProductForm(forms.ModelForm):
 
     class Meta:
@@ -25,11 +30,15 @@ class ProductOptionInline(admin.TabularInline):
             }
         ),
     )
+    def get_formset(self, request, obj=None, **kwargs):
+        return super(ProductOptionInline, self).get_formset(request, obj=obj, **kwargs)
+        
     
 class ProductAdmin(admin.ModelAdmin):
     form = ProductForm
     class Media:
         js = (
+                "/static/admin/js/inlines.js",  #this needs to be loaded before productadmin
                 "/static/cadoshop/productadmin.js",
             )
     list_display = ('category', 'admin_thumbnail', 'name', '_unit_price', 'is_active')
@@ -87,7 +96,7 @@ class ProductCategoryAdmin(MPTTModelAdmin):
             'fields': ('name', 'slug', 'parent', 'order', 'active', 'description', 'thumbnail')
         }),
         ('SEO', {
-            'fields': ('meta_keywords',)
+            'fields': ('seo_keywords', 'seo_description', 'seo_title',)
         }),
         ('Extra Fields', {
             'fields': ('extra_fields',)

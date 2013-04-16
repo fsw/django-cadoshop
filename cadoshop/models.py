@@ -23,11 +23,11 @@ class ProductCategory(Tree, Sluggable):
     
     thumbnail = ProcessedImageField([ResizeToFill(50, 50)], upload_to='categories', format='JPEG', options={'quality': 90}, blank=True)
     description = models.TextField(blank=True, null=True)
-    meta_keywords = models.CharField(
-        blank=True,
-        default="",
-        max_length=255,
+    
+    seo_title = models.CharField(max_length=512, blank=True)
+    seo_keywords = models.CharField(max_length=512, blank=True,
         help_text="Comma-separated keywords for search engines.")
+    seo_description = models.TextField('seo_description', blank=True)
 
     extra_fields = ExtraFieldsDefinition(null=True, blank=True)
 

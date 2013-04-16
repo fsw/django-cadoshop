@@ -19,9 +19,20 @@
 	float: right;
 }
 
+a {
+	color: #f70;
+	text-decoration: none;
+}
+
+a:hover {
+	color: #f30;
+}
+
+$dark: #554;
+
 body {
-    background: none repeat scroll 0 0 #E0E0E0;
-    color: #444444;
+    background-color: #ddd;
+    color: #444;
     font: 12px arial, helvetica, sans-serif;
 }
 
@@ -95,7 +106,7 @@ body {
 }
 
 #bar {
-	background: #333;
+	background: $dark;
 	color: white;
 	overflow: visible;
 	height: 44px;
@@ -115,7 +126,7 @@ body {
 
 #barMenu > li {
 	float: left;
-	border-left: 1px solid #555;
+	border-left: 1px solid #888;
 	margin: 0;
 }
 
@@ -148,7 +159,7 @@ body {
     width: 188px;
     z-index: 99999;
 	margin:0;
-	background-color: #333;
+	background-color: $dark;
 	height: auto;
 }
 #barMenu ul ul {
@@ -214,7 +225,19 @@ body {
 
 #breadcrumbs li {
 	float: left;
-	margin-right: 20px;
+	padding-right: 19px;
+	margin-right: 9px;
+	background-image: url(/static/icons/crumb.png);
+	background-position: right center;
+	background-repeat: no-repeat;
+}
+
+#breadcrumbs li:last-child {
+	background-image: none;
+}
+
+#breadcrumbs li a {
+	text-decoration: none;
 }
 
 
@@ -239,12 +262,30 @@ body {
 }
 
 #sidebar .widget h2 {
-	background-color: #333;
+	background-color: $dark;
 	color: white;
 	padding: 5px 12px;
 	border-top-right-radius: 10px;
 	border-top-left-radius: 10px;
 	margin-bottom: 10px;
+}
+
+#categoriesmap {
+	column-count: 2;
+	column-gap: 20px;
+	background: #eee;
+	padding: 20px;
+	border-top: 3px solid #ddd;
+	color: #444;
+}
+
+#categoriesmap a {
+	color: #444;
+}
+
+#categoriesmap ul {
+	list-style-type: none;
+	padding-left: 10px;
 }
 
 .pagination {
