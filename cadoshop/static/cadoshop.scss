@@ -277,15 +277,31 @@ body {
 	padding: 20px;
 	border-top: 3px solid #ddd;
 	color: #444;
-}
-
-#categoriesmap a {
-	color: #444;
-}
-
-#categoriesmap ul {
-	list-style-type: none;
-	padding-left: 10px;
+	a {
+		color: #444;
+	}
+	ul {
+		list-style-type: none;
+		padding-left: 10px;
+	}
+	> ul > li {
+		font-size: 13px;
+		margin-bottom: 5px;
+	}
+	> ul > li > ul > li > a {
+		font-weight: bold;
+	}
+	> ul > li > ul {
+		overflow: auto;
+	}
+	> ul > li > ul > li {
+		float: left;
+		margin-left: 20px;
+	}
+	> ul > li > ul > li > ul > li {
+		float: left;
+		margin-left: 10px;
+	}
 }
 
 .pagination {

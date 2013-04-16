@@ -134,7 +134,7 @@
 		{% recursetree categories %}
 		    <li>
 		        <a href="/products/?category={{ node.slug }}">{{ node.name }}</a>
-		        {% if not node.is_leaf_node %}
+		        {% if not node.is_leaf_node and node.level < 2 %}
 		            <ul class="children">
 		                {{ children }}
 		            </ul>
