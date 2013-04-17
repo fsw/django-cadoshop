@@ -2,6 +2,7 @@
 
 {% load i18n %}
 {% load cadoshop_tags %}
+{% load mptt_tags %}
 
 {% block title %}{% trans "Products" %} - {{ block.super }}{% endblock %}
 
@@ -17,12 +18,50 @@
 	</ul>
 {% endblock %}
 	
+{% block extrawidgets %}
+<div class="widget">
+	<h2>categories</h2>
+	<ul>
+		<li><a href="{% search_url category='' %}">All Categories</a></li>
+		<ul>
+		{% recursetree categories %}
+		<li>
+			{% if search_params.category == node.slug %}
+				<b>
+			{% else %}
+				<a href="{% search_url category=node.slug %}">
+			{% endif %}
+		        {{ node.name }} ({{ node.count }}) <!--  /{{ node.total }}) -->
+			{% if search_params.category == node.slug %}
+				</b>
+			{% else %}
+				</a>
+			{% endif %}
+		    {% if not node.is_leaf_node %}
+		    	<ul>
+		        {{ children }}
+		        </ul>
+		    {% endif %}
+	    </li>
+		{% endrecursetree %}
+		</ul>
+	</ul>
+</div>
+{% endblock %}
+		 
+	
 {% block before %}
+		<form method='get'>
+		<ul id="filterform">
+			{% search_filter_form %}
+			<li><input type="submit" value="filter"/></li>
+		</ul>
+		</form>
 	{% block after %}
 		<div class="pagination">
 	        <div>
 	        	{% if page.has_previous %}
-	        		<a href="?q={{ query }}&amp;page={{ page.previous_page_number }}">
+	        		<a href="{% search_url page=page.previous_page_number %}">
 	            {% else %}
 	            	<span>
 	        	{% endif %}
@@ -36,7 +75,7 @@
 					page <strong>{{page.number}}</strong> of <strong>{{page.paginator.num_pages}}</strong>
 					|
 	            {% if page.has_next %}
-	            	<a href="?q={{ query }}&amp;page={{ page.next_page_number }}">
+	            	<a href="{% search_url page=page.next_page_number %}">
 	            {% else %}
 	            	<span>
 	            {% endif %}

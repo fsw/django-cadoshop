@@ -15,6 +15,7 @@ from mptt.fields import TreeForeignKey
 from imagekit.models import ImageSpecField, ProcessedImageField
 from imagekit.processors import ResizeToFill, Adjust
 from fields import ExtraFieldsDefinition, ExtraFieldsValues, ColorsField
+from haystack import indexes
 
 class ProductCategory(Tree, Sluggable):
 
@@ -38,14 +39,15 @@ class ProductCategory(Tree, Sluggable):
     def __unicode__(self):
         return self.name
     
-    def get_extra_form_fields(self):
-        fields = self.get_extra_model_fields();
-        ret = {}
-        for key, field in fields.items():
-            ret[key] = field.formfield()
-        return ret
-            
-    def get_extra_model_fields(self):
+    #def get_extra_form_fields(self):
+    #    fields = self.get_extra_model_fields();
+    #    ret = {}
+    #    for key, field in fields.items():
+    #        ret[key] = field.formfield()
+    #    return ret
+    
+    #get_extra_model_fields
+    def get_extra_fields(self):
         all_cats = self.get_ancestors(include_self=True)
         ret = {}
         for cat in all_cats:
@@ -58,7 +60,26 @@ class ProductCategory(Tree, Sluggable):
                         for k, v in args['choices'].items():
                             new_options.append((k,v))
                         args['choices'] = new_options
-                    ret[key] = methodToCall(**args)
+                    f = methodToCall(**args)
+                    solr_key = key
+                    h_field = indexes.index_field_from_django_field(f)
+                    if h_field == indexes.CharField:
+                        solr_key = '%s_s' % key
+                    elif h_field == indexes.DateTimeField:
+                        solr_key = '%s_dt' % key
+                    elif h_field == indexes.BooleanField:
+                        solr_key = '%s_b' % key
+                    elif h_field == indexes.MultiValueField:
+                        solr_key = '%s_s' % key
+                    elif h_field == indexes.FloatField:
+                        solr_key = '%s_f' % key
+                    elif h_field == indexes.IntegerField:
+                        solr_key = '%s_i' % key
+                    else:
+                        raise Exception('unknown type')
+
+                    ret[key] = {'field' : f, 'solr_key' : solr_key}
+                    
             except Exception:
                 pass
         return ret

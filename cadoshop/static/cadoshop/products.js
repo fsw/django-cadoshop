@@ -6,4 +6,6 @@ $(function(){
 		$(this).parents('.product').find('.option' + $(this).val()).show();
 	});
 	$("select.optionSelect").change();
+	
+	$("#tagcloud").jQCloud(document.tags_list);
 })

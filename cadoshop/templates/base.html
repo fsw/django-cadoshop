@@ -1,6 +1,7 @@
 <html>
 {% load i18n %}
 {% load mptt_tags %}
+{% load cadoshop_tags %}
 {% load url from future %}
 <head>
 	<title>{% block title %}Koncept Odzież{% endblock %}</title>
@@ -8,6 +9,7 @@
 	{% compress css %}
 	<link rel="stylesheet" href="{{STATIC_URL}}cadoshop.scss" type="text/x-scss" charset="utf-8">
 	<link rel="stylesheet" href="{{ STATIC_URL }}cadoshop/jquery.fancybox.css" type="text/css" charset="utf-8">
+	<link rel="stylesheet" href="{{ STATIC_URL }}cadoshop/jqcloud.scss" type="text/x-scss" charset="utf-8">
 	{% endcompress %}
 </head>
 <body>
@@ -31,10 +33,10 @@
 		<div id="bar">
 			<ul id="barMenu">
 				<li><a href="/">{% trans "Start" %}</a></li>
-				<!-- <li><a href="/products/">{% trans "Products" %}</a><ul> -->
+				<!-- <li><a href="{% url "product_list" category_slug="" %}">{% trans "Products" %}</a><ul> -->
 				    {% recursetree categories %}
 				        <li>
-				            <a href="/products/?category={{ node.slug }}">{{ node.name }}</a>
+				            <a href="{% url "product_list" category_slug=node.slug %}">{{ node.name }}</a>
 				            {% if not node.is_leaf_node %}
 				                <ul class="children">
 				                    {{ children }}
@@ -70,13 +72,9 @@
 
 	{% block sidebar %}
 	<div id="sidebar">
-		<!-- 
-		<div class="widget">
-			<h2>asdfadsfad</h2>
-			asdasd
-		</div>
-		 -->
-		 
+		{% block extrawidgets %}
+		{% endblock %}
+		
 		<div class="widget">
 			<h2>{% trans "Your shopping cart" %}</h2>
 			<table style="width:100%">
@@ -118,6 +116,18 @@
 			    </tr>
 			</table>
 		</div>
+		<div class="widget">
+			<h2>tag cloud</h2>
+			<div id="tagcloud"></div>
+			<script type="text/javascript">
+		      document.tags_list = new Array(
+				{% for key, tag in tags.items %}
+		        	{text: "{{key}}", weight: {{tag.count}}, link: "{% search_url tag=key %}"}{% if not forloop.last %},{% endif %}
+		  		{% endfor %}
+		      );
+		    </script>
+		</div>
+				
 	</div>
 	{% endblock %}
 	
@@ -133,7 +143,7 @@
 	<ul>
 		{% recursetree categories %}
 		    <li>
-		        <a href="/products/?category={{ node.slug }}">{{ node.name }}</a>
+		        <a href="{% url "product_list" category_slug=node.slug %}" title="{{node.seo_description}}">{{ node.name }}</a>
 		        {% if not node.is_leaf_node and node.level < 2 %}
 		            <ul class="children">
 		                {{ children }}
@@ -151,6 +161,7 @@ powered by <a href="http://github.com/fsw/django-cadoshop">CadoShop</a>
 </div>
 	<script type='text/javascript' src="{{ STATIC_URL }}cadoshop/jquery-1.9.1.min.js"></script>
 	<script type='text/javascript' src="{{ STATIC_URL }}cadoshop/jquery.fancybox.js"></script>
+	<script type='text/javascript' src="{{ STATIC_URL }}cadoshop/jqcloud-1.0.0.min.js"></script>
 	<script type='text/javascript' src="{{ STATIC_URL }}cadoshop/products.js"></script>
 </body>
 </html>

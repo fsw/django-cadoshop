@@ -8,6 +8,8 @@ from django.template import loader, Context, RequestContext
 from django.utils.translation import ugettext as _
 from django.views.generic import list_detail
 from django.core.paginator import Paginator, InvalidPage
+from django.core.urlresolvers import reverse
+import urllib
 
 from plata.contact.models import Contact
 from plata.discount.models import Discount
@@ -57,13 +59,13 @@ shop = Shop(Contact, Order, Discount)
 def extrafields(request, category_id):
     category = ProductCategory.objects.get(id=category_id)
     form = Form()
-    for key, field in category.get_extra_form_fields().items():
-        form.fields['extra[%s]' % key] = field
+    for key, field in category.get_extra_fields().items():
+        form.fields['extra[%s]' % key] = field['field'].formfield()
     return HttpResponse(form.as_p())
 
 
 
-def product_list(request):
+def product_list(request, category_slug=''):
     context = {}
     if request.method == 'POST':
         order = shop.order_from_request(request, create=True)
@@ -79,7 +81,7 @@ def product_list(request):
                 raise
         return redirect(request.get_full_path())
 
-    results_per_page = 5
+    results_per_page = 2
     results = GroupedSearchQuerySet()
     results = results.facet('category')
     results = results.facet('tags')
@@ -87,28 +89,57 @@ def product_list(request):
     #results2 = GroupedSearchQuerySet()
     #results.facet('tags')
     
-    context['search_params'] = dict((key, request.GET.get(key, None)) for key in ['q', 'page', 'category', 'tag'] )
+    context['search_params'] = {}
+    context['breadcrumbs'] = [(reverse('product_list', kwargs={'category_slug':''}), 'All Products')] 
     
-    context['breadcrumbs'] = [('/products/', 'All Products')] 
-    
-    if 'category' in request.GET and request.GET['category']:
-        results = results.filter(category=request.GET['category'])
-        category = ProductCategory.objects.get(slug=request.GET['category'])
+    available_filters = [u'price', u'has_image']
+    #context['search_params'] = dict((key, request.GET.get(key, None)) for key in ['q', 'page', 'tags'] )
+
+    if category_slug:
+        results = results.filter(category=category_slug)
+        category = ProductCategory.objects.get(slug=category_slug)
+        for key, field in category.get_extra_fields().items():
+            available_filters.append(field['solr_key'])
+        
         path = category.get_ancestors(include_self=True)
         for category in path:
-            context['breadcrumbs'].append((category.slug, category.name))
+            context['breadcrumbs'].append((reverse('product_list', kwargs={'category_slug':category.slug}), category.name))
     
     #context['breadcrumbs']
-        
+
     if 'q' in request.GET and request.GET['q']:
+        context['search_params']['q'] = request.GET['q']
         results = results.filter(text=AutoQuery(request.GET['q']))
-        context['breadcrumbs'].append(('', 'Search Results'))
     
         
     if 'tags' in request.GET and request.GET['tags']:
+        context['search_params']['tags'] = request.GET['tags']
         tags = request.GET['tags'].split(',')
         for tag in tags:
             results = results.filter(tags=tag)
+    
+    
+    for key in available_filters:
+        if 'filter[' + key +']' in request.GET and request.GET['filter[' + key +']']:
+            context['search_params']['filter[' + key +']'] = request.GET['filter[' + key +']']
+            results = results.filter(**{key:request.GET['filter[' + key +']']})
+        if 'filter[' + key +'_from]' in request.GET and request.GET['filter[' + key +'_from]']:
+            context['search_params']['filter[' + key +'_from]'] = request.GET['filter[' + key +'_from]']
+            results = results.filter(**{key + '__gte':request.GET['filter[' + key +'_from]']})
+        if 'filter[' + key +'_to]' in request.GET and request.GET['filter[' + key +'_to]']:
+            context['search_params']['filter[' + key +'_to]'] = request.GET['filter[' + key +'_to]']
+            results = results.filter(**{key + '__lte':request.GET['filter[' + key +'_to]']})
+    
+
+    if context['search_params']:
+        urlparams = urllib.urlencode(dict([k, v.encode('utf-8')] for k, v in context['search_params'].items()))
+        print context['search_params']
+        context['breadcrumbs'].append((
+            reverse('product_list', kwargs={'category_slug':category_slug}) + '?' + urlparams
+            , 'Search Results'))
+    
+    #results = results.filter_and(price=12)
+    #print request.GET
     
     context['facet'] = results.facet_counts()['fields']
 
@@ -123,6 +154,12 @@ def product_list(request):
 
     if page_no < 1:
         raise Http404("Pages should be 1 or greater.")
+
+    context['search_params']['page'] = page_no
+    context['search_params']['category'] = category_slug
+
+    context['breadcrumbs'][-1] = ('',) + context['breadcrumbs'][-1][1:]
+
 
     start_offset = (page_no - 1) * results_per_page
     results[start_offset:start_offset + results_per_page]
