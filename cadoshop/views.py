@@ -81,7 +81,7 @@ def product_list(request, category_slug=''):
                 raise
         return redirect(request.get_full_path())
 
-    results_per_page = 2
+    results_per_page = 25
     results = GroupedSearchQuerySet()
     results = results.facet('category')
     results = results.facet('tags')
