@@ -46,7 +46,7 @@
 				    {% endrecursetree %}
 				<!-- </ul></li> -->
 			</ul>
-			<form id="barSearch" method="get" action="">
+			<form id="barSearch" method="get" action="{% url "product_list" category_slug='' %}">
 				<div class="fakeinput">
 			        <input id="q" type="text" value="" name="q" autocomplete="off" placeholder="Search"/>
 			   		<input class="icon" type="image" value="Go" src="{{ STATIC_URL }}icons/search.png"/> 
