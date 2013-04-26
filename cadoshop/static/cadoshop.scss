@@ -135,75 +135,75 @@ body {
 	padding: 0 20px;
 }
 
-#barMenu {
-	float: left;
-	padding: 7px 0;
-	width:790px;
-}
-
 #bar ul {
 	list-style-type: none;
 }
 
-#barMenu > li {
+#barMenu {
 	float: left;
-	border-left: 1px solid #888;
-	margin: 0;
-}
+	padding: 7px 0;
+	width:790px;
 
-#barMenu > li:first-child {
-	border: none;
-}
+	> li {
+		float: left;
+		border-left: 1px solid #888;
+		margin: 0;
+	}
 
-#barMenu a {
-	color: #ffffff;
-	font-size: 17px;
-	padding: 3px 12px 3px 12px;
-	text-decoration: none;
-	display: block;
-	font-weight: bold;
-}
-
-#barMenu li {
-    position: relative;
-    line-height: 24px;
-}
-
-#barMenu ul {
-    box-shadow: 0 3px 3px rgba(0, 0, 0, 0.2);
-    display: none;
-    float: left;
-    left: 0;
-    margin: 0;
-    position: absolute;
-    top: 30px;
-    width: 188px;
-    z-index: 99999;
-	margin:0;
-	background-color: $dark;
-	height: auto;
-}
-#barMenu ul ul {
-    left: 100%;
-    top: 0;
-}
-
-#barMenu ul a {
-    border-bottom: 1px solid #555;
-    height: auto;
-    line-height: 1.5em;
-	display:block;
-}
-
-#barMenu li:hover > a, #barMenu a:focus, #barMenu a:hover {
-    background-color: #888;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
-    color: #333;
-    text-decoration: none;
-}
-
-#barMenu li:hover > ul {
-    display: block;
+	> li:first-child {
+		border: none;
+	}
+	
+	a {
+		color: #ffffff;
+		font-size: 17px;
+		padding: 3px 12px 3px 12px;
+		text-decoration: none;
+		display: block;
+		font-weight: bold;
+	}
+	
+	li {
+	    position: relative;
+	    line-height: 24px;
+	}
+	
+	ul {
+	    box-shadow: 0 3px 3px rgba(0, 0, 0, 0.2);
+	    display: none;
+	    float: left;
+	    left: 0;
+	    margin: 0;
+	    position: absolute;
+	    top: 30px;
+	    width: 188px;
+	    z-index: 99999;
+		margin:0;
+		background-color: $dark;
+		height: auto;
+	}
+	
+	ul ul {
+	    left: 100%;
+	    top: 0;
+	}
+	ul a {
+	    border-bottom: 1px solid #555;
+	    height: auto;
+	    line-height: 1.5em;
+		display:block;
+	}
+	
+	li:hover > a, a:focus, a:hover {
+	    background-color: #888;
+	    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+	    color: #333;
+	    text-decoration: none;
+	}
+	
+	li:hover > ul {
+	    display: block;
+	}
 }
 
 
