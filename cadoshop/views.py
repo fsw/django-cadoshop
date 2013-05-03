@@ -21,9 +21,7 @@ from django.http import HttpResponse
 from models import Product, ProductCategory, ProductOption
 
 from haystack.query import SearchQuerySet
-
 from search.solr_grouping_backend import GroupedSearchQuerySet
-
 from haystack.inputs import AutoQuery
 
 def frontend_context(request): 
