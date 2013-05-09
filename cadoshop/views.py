@@ -30,13 +30,13 @@ def frontend_context(request):
     context['user_order'] = order
     context['user_contact'] = shop.contact_from_user(request.user)
     context['user_order_total'] = order.items.count() if order else 0
-    all_facets = SearchQuerySet().facet('category').facet('tags').facet_counts()['fields']
+    all_facets = SearchQuerySet().facet('category').facet('tags').facet_counts().get('fields', {})
     
     context['tags'] = {}
-    for tag, count in all_facets['tags']:
+    for tag, count in all_facets.get('tags', {}):
         context['tags'][tag] = {'total':count, 'count':count}
     categories_map = {}
-    for category, count in all_facets['category']:
+    for category, count in all_facets.get('category', {}):
         categories_map[category] = count
         
     categories = ProductCategory.objects.all()
