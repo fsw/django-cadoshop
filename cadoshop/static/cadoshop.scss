@@ -142,7 +142,7 @@ body {
 #barMenu {
 	float: left;
 	padding: 7px 0;
-	width:790px;
+	width: 760px;
 
 	> li {
 		float: left;
@@ -218,6 +218,7 @@ body {
 	overflow: auto;
 	border-radius: 7px;
 	height: 30px;
+	width:160px;
 }
 
 #barSearch input#q {
@@ -227,7 +228,7 @@ body {
     float: left;
     width: 120px;
     line-height: 20px;
-    height: 30px;
+    height: 20px;
 }
 
 #barSearch input.icon {
