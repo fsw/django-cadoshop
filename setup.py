@@ -12,7 +12,6 @@ setup(
     download_url='git://github.com/fsw/django-cadolib.git',
     packages=['cadoshop'],
     install_requires=[
-        'cadolib',
 		'plata',
     ],
 )
