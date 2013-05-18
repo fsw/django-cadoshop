@@ -84,10 +84,20 @@ class ProductCategory(Tree, Sluggable):
                 pass
         return ret
 
-        
+class Manufacturer(models.Model):
+    name = models.CharField(_('name'), max_length=256)
+    slug = models.SlugField(_('slug'), unique=True)
+    logo = ProcessedImageField([ResizeToFill(220, 220)], upload_to='manufacturers', format='JPEG', options={'quality': 90}, blank=True)
+    url = models.URLField(verbose_name = u'URL')
 
+    def __unicode__(self):
+        return self.name
+    
 class Product(PriceBase):
     category = TreeForeignKey(ProductCategory)
+    manufacturer = models.ForeignKey(Manufacturer, blank=True, null=True)
+    
+    fits_to = models.ManyToManyField('Product', related_name='fits')
     
     is_active = models.BooleanField(_('is active'), default=True)
     name = models.CharField(_('name'), max_length=100)

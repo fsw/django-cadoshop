@@ -1,13 +1,13 @@
 import os
 
-from django.conf.urls.defaults import include, patterns, url
+from django.conf.urls import include, patterns, url
 from django.contrib import admin
 from django.shortcuts import redirect
 from django.conf import settings
 
 from views import shop
 
-urls = patterns('',
+urlpatterns = patterns('',
     url(r'', include(shop.urls)),    
     url(r'^products/(?P<category_slug>[A-Za-z0-9\-]*)$', 'cadoshop.views.product_list', name='product_list'),
     url(r'^product/(?P<object_id>\d+)/$', 'cadoshop.views.product_detail', name='product_detail'),

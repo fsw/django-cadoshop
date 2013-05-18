@@ -49,7 +49,10 @@ class ProductAdmin(admin.ModelAdmin):
     admin_thumbnail = AdminThumbnail(image_field='tiny_thumbnail')
     fieldsets = (
         (None, {
-            'fields': ('name', 'slug', 'category', '_unit_price', 'description', 'is_active', 'colors')
+            'fields': ('name', 'slug', 'category', 'manufacturer', '_unit_price', 'description', 'is_active', 'colors')
+        }),
+        ('Fits to Products', {
+            'fields': ('fits_to',)
         }),
         ('Extra Fields', {
             'fields': ('extra',)
@@ -88,7 +91,7 @@ class ProductAdmin(admin.ModelAdmin):
     def save_formset(self, request, form, formset, change):
         #print 'FS'
         formset.save()
-    
+
 class ProductCategoryAdmin(MPTTModelAdmin):
     prepopulated_fields = {'slug': ('name',)}
     fieldsets = (
@@ -102,7 +105,16 @@ class ProductCategoryAdmin(MPTTModelAdmin):
             'fields': ('extra_fields',)
         }),
     )
+        
+class ManufacturerAdmin(admin.ModelAdmin):
+    prepopulated_fields = {'slug': ('name',)}
+    fieldsets = (
+        (None, {
+            'fields': ('name', 'slug', 'logo', 'url' )
+        }),
+    )
 
 
+admin.site.register(models.Manufacturer, ManufacturerAdmin)
 admin.site.register(models.Product, ProductAdmin)
 admin.site.register(models.ProductCategory, ProductCategoryAdmin)
