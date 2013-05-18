@@ -97,7 +97,7 @@ class Product(PriceBase):
     category = TreeForeignKey(ProductCategory)
     manufacturer = models.ForeignKey(Manufacturer, blank=True, null=True)
     
-    fits_to = models.ManyToManyField('Product', related_name='fits')
+    fits_to = models.ManyToManyField('Product', related_name='fits', blank=True, null=True)
     
     is_active = models.BooleanField(_('is active'), default=True)
     name = models.CharField(_('name'), max_length=100)
