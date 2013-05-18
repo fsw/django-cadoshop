@@ -13,5 +13,6 @@ setup(
     packages=['cadoshop'],
     install_requires=[
 		'plata',
+        'xlwt',
     ],
 )
