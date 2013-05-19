@@ -26,6 +26,8 @@ class Settings(BaseSettings):
         'LIVE': False,
         }
     
+    GRAPPELLI_ADMIN_TITLE = 'Cado Shop Admin'
+    
     CURRENCIES = ('PLN',)
     
     PLATA_REPORTING_ADDRESSLINE = 'Example Corp. - 3. Example Street - 1234 Example'

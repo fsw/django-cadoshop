@@ -12,7 +12,7 @@ from models import Product, ProductOption
 from django.forms.models import inlineformset_factory
 from django.contrib.admin.util import flatten_fieldsets
 from django.utils.functional import curry
-
+from cadolib.admin import StaticPage, StaticPageAdmin, Setting, SettingAdmin
 
 class ProductForm(forms.ModelForm):
 
@@ -52,16 +52,19 @@ class ProductAdmin(admin.ModelAdmin):
             'fields': ('name', 'slug', 'category', 'manufacturer', '_unit_price', 'description', 'is_active', 'colors')
         }),
         ('Fits to Products', {
+            'classes': ('collapse', 'grp-collapse', 'grp-closed'),
             'fields': ('fits_to',)
         }),
         ('Extra Fields', {
+            'classes': ('collapse', 'grp-collapse', 'grp-closed'),
             'fields': ('extra',)
         }),
         ('Images', {
+            'classes': ('collapse', 'grp-collapse', 'grp-closed'),
             'fields': ('image1','image2','image3','image4','image5')
         }),
         ('Advanced options', {
-            'classes': ('collapse',),
+            'classes': ('collapse', 'grp-collapse', 'grp-closed'),
             'fields': ('currency', 'tax_included', 'tax_class')
         }),
     )
@@ -118,3 +121,6 @@ class ManufacturerAdmin(admin.ModelAdmin):
 admin.site.register(models.Manufacturer, ManufacturerAdmin)
 admin.site.register(models.Product, ProductAdmin)
 admin.site.register(models.ProductCategory, ProductCategoryAdmin)
+
+admin.site.register(StaticPage, StaticPageAdmin)
+admin.site.register(Setting, SettingAdmin)
