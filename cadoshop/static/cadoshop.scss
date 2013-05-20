@@ -370,20 +370,20 @@ body {
  	border-bottom: 1px solid #DDD;
     padding: 10px;
     overflow: auto;
-}
- 
-.product .thumbnail {
-	width: 170px;
-	float: left;
-}
 
-.product .desc {
-	width: 320px;
-	float: left;
-	padding: 10px;
-}
-
-.product .actions {
-	width: 150px;
-	float: right;
+	 .thumbnail {
+		width: 170px;
+		float: left;
+	}
+	
+	.desc {
+		width: 320px;
+		float: left;
+		padding: 10px;
+	}
+	
+	.actions {
+		width: 150px;
+		float: right;
+	}
 }

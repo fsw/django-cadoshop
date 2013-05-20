@@ -7,5 +7,7 @@ $(function(){
 	});
 	$("select.optionSelect").change();
 	
-	$("#tagcloud").jQCloud(document.tags_list);
+	if($("#tagcloud").length){
+		$("#tagcloud").jQCloud(document.tags_list);
+	}
 })
