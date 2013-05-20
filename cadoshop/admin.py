@@ -41,7 +41,7 @@ class ProductAdmin(admin.ModelAdmin):
                 #"/static/admin/js/inlines.js",  #this needs to be loaded before productadmin
                 "/static/cadoshop/productadmin.js",
             )
-    list_display = ('category', 'admin_thumbnail', 'name', '_unit_price', 'is_active')
+    list_display = ('name', 'admin_thumbnail', 'category',  '_unit_price', 'is_active')
     list_display_links = ('name', 'admin_thumbnail',)
     list_filter = ('is_active', '_unit_price')
     prepopulated_fields = {'slug': ('name',)}
