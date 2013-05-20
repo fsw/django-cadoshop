@@ -19,9 +19,11 @@ from haystack import indexes
 
 class ProductCategory(ExtraFieldsProvider, Sluggable):
 
-    name = models.CharField(max_length=100, verbose_name=_('name'))
+    name = models.CharField(max_length=256, verbose_name=_('name'))
     active = models.BooleanField(default=True, verbose_name=_('active'))
     
+    extra_search_terms = models.CharField(max_length=256, verbose_name=_('Extra search keywords'))
+
     thumbnail = ProcessedImageField([ResizeToFill(50, 50)], upload_to='categories', format='JPEG', options={'quality': 90}, blank=True)
     description = models.TextField(blank=True, null=True)
     
@@ -36,6 +38,13 @@ class ProductCategory(ExtraFieldsProvider, Sluggable):
         verbose_name = _('category')
         verbose_name_plural = _('categories')
 
+    def get_excerpt(self):
+        if len(self.description) > 65:
+            return self.description[:65] + '...'
+        else:
+            return self.description
+    get_excerpt.short_description = 'Description'
+    
     def __unicode__(self):
         return self.name
     
@@ -94,6 +103,10 @@ class Manufacturer(models.Model):
     name = models.CharField(_('name'), max_length=256)
     slug = models.SlugField(_('slug'), unique=True)
     logo = ProcessedImageField([ResizeToFill(220, 220)], upload_to='manufacturers', format='JPEG', options={'quality': 90}, blank=True)
+    tiny_thumbnail = ImageSpecField([ResizeToFill(50, 50)],
+                               image_field='logo',
+                               format='JPEG', options={'quality': 90})
+
     url = models.URLField(verbose_name = u'URL')
 
     def __unicode__(self):

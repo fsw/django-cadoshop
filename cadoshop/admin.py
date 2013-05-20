@@ -38,12 +38,12 @@ class ProductAdmin(admin.ModelAdmin):
     form = ProductForm
     class Media:
         js = (
-                "/static/admin/js/inlines.js",  #this needs to be loaded before productadmin
+                #"/static/admin/js/inlines.js",  #this needs to be loaded before productadmin
                 "/static/cadoshop/productadmin.js",
             )
     list_display = ('category', 'admin_thumbnail', 'name', '_unit_price', 'is_active')
-    list_display_links = ('name',)
-    list_filter = ('is_active',)
+    list_display_links = ('name', 'admin_thumbnail',)
+    list_filter = ('is_active', '_unit_price')
     prepopulated_fields = {'slug': ('name',)}
     search_fields = ('name', 'description')
     admin_thumbnail = AdminThumbnail(image_field='tiny_thumbnail')
@@ -96,10 +96,16 @@ class ProductAdmin(admin.ModelAdmin):
         formset.save()
 
 class ProductCategoryAdmin(MPTTModelAdmin):
+    
+    admin_thumbnail = AdminThumbnail(image_field='thumbnail')
+    
+    list_display = ('name', 'admin_thumbnail', 'get_excerpt', 'active')
+    list_display_links = ('name',)
+    list_filter = ('active', )
     prepopulated_fields = {'slug': ('name',)}
     fieldsets = (
         (None, {
-            'fields': ('name', 'slug', 'parent', 'order', 'active', 'description', 'thumbnail')
+            'fields': ('name', 'slug', 'parent', 'order', 'active', 'description', 'thumbnail', 'extra_search_terms')
         }),
         ('SEO', {
             'fields': ('seo_keywords', 'seo_description', 'seo_title',)
@@ -110,6 +116,10 @@ class ProductCategoryAdmin(MPTTModelAdmin):
     )
         
 class ManufacturerAdmin(admin.ModelAdmin):
+    admin_thumbnail = AdminThumbnail(image_field='tiny_thumbnail')
+    list_display = ('name', 'admin_thumbnail', 'url')
+    list_display_links = ('name',)
+    
     prepopulated_fields = {'slug': ('name',)}
     fieldsets = (
         (None, {
