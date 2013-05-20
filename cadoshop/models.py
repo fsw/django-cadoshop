@@ -22,7 +22,7 @@ class ProductCategory(ExtraFieldsProvider, Sluggable):
     name = models.CharField(max_length=256, verbose_name=_('name'))
     active = models.BooleanField(default=True, verbose_name=_('active'))
     
-    extra_search_terms = models.CharField(max_length=256, verbose_name=_('Extra search keywords'))
+    extra_search_terms = models.CharField(max_length=256, verbose_name=_('Extra search keywords'), blank=True, null=True)
 
     thumbnail = ProcessedImageField([ResizeToFill(50, 50)], upload_to='categories', format='JPEG', options={'quality': 90}, blank=True)
     description = models.TextField(blank=True, null=True)
