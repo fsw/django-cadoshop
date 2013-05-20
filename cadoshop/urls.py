@@ -10,7 +10,7 @@ from views import shop
 urlpatterns = patterns('',
     url(r'', include(shop.urls)),    
     url(r'^products/(?P<category_slug>[A-Za-z0-9\-]*)$', 'cadoshop.views.product_list', name='product_list'),
-    url(r'^product/(?P<object_id>\d+)/$', 'cadoshop.views.product_detail', name='product_detail'),
+    url(r'^product/(?P<product_slug>[A-Za-z0-9\-]*)/$', 'cadoshop.views.product_detail', name='product_detail'),
     
     url(r'^extrafields/(?P<category_id>\d+)$', 'cadoshop.views.extrafields', name='extrafields'),
     

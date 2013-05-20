@@ -31,5 +31,5 @@ http://www.eyecon.ro/colorpicker/
 
     def render(self, name, value, attrs=None):
         rendered = super(ColorPickerWidget, self).render(name, value, attrs)
-        return rendered + mark_safe(COLORFIELD_HTML_WIDGET % {
-                            'color': value, 'name': name})
+        return mark_safe('<div class="colorsContainer">') + rendered + mark_safe(COLORFIELD_HTML_WIDGET % {
+                            'color': value, 'name': name}) + mark_safe('</div>')

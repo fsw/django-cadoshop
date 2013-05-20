@@ -1,6 +1,7 @@
 (function($){
     $(document).ready(function($) {
-		function saveExtra(){
+    	
+    	/* function saveExtra(){
 			$('.extraFormDiv').each(function(){
 				var extra = {};
 				$(this).find("[name^=extra]").each(function(i, elem){
@@ -19,11 +20,11 @@
 					$(this).find("[name=extra\[" + key + "\]]").val(extra[key]);
 				}
 			});
-		}
-	
-		if ($('#product_form').length)
+		}*/
+		if ($('#productoption_set-group').length)
 		{
-			$('.field-extra').each(function(){
+	    	
+			/*$('.field-extra').each(function(){
 				extraDiv = $('<div class="extraFormDiv"></div>');
 				$(this).append(extraDiv);
 				$(this).children().first().hide();
@@ -41,26 +42,35 @@
 					loadExtra();
 				}, 'html');
 			})
-			$('#id_category').change();
+			$('#id_category').change();*/
 			
-			$.fn.formset_original = $.fn.formset; 
-			$.fn.formset_original.defaults = $.fn.formset.defaults; 
+
+			$.fn.grp_inline_original = $.fn.grp_inline; 
+			$.fn.grp_inline_original.defaults = $.fn.grp_inline.defaults; 
 			
-			$.fn.formset = function(opts){
-				ret = this.formset_original(opts)
+			$.fn.grp_inline = function(opts){
+				ret = this.grp_inline_original(opts);
 				if (opts.prefix == 'productoption_set')
 				{
-					if ($('#productoption_set-0').length == 0)
+			    	//alert("asd");
+			    	//$('#productoption_set-group')
+			    	if ($('#productoption_set0').length == 0)
 					{
-						addButton = $('#productoption_set-group').find("a:last");
+						addButton = $('#productoption_set-group').find("a.grp-add-handler:last");
 						addButton.click();
 						$('#id_productoption_set-0-name').val('default');
+						$('#productoption_set0 .grp-remove-handler').hide();
 					}
+			    	else
+			    	{
+			    		$('#productoption_set0 .grp-delete-handler').hide();
+			    	}
+			    	
+			    	
 				}
 				return ret;
 			}
-			$.fn.formset.defaults = $.fn.formset_original.defaults;
-			
+			$.fn.grp_inline.defaults = $.fn.grp_inline_original.defaults;
 		}
     });
-})(django.jQuery);
+})(grp.jQuery);

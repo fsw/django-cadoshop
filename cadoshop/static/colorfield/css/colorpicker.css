@@ -1,7 +1,10 @@
+.colorsContainer {
+	position: relative;
+}
 .color-picker-preview {
     border:1px solid #ccc;
     height:23px;
-    left:122px;
+    right:0;
     position:absolute;
     top:0;
     width:23px;

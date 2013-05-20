@@ -190,8 +190,8 @@ class OrderItemForm(forms.Form):
 
 
 
-def product_detail(request, object_id):
-    product = get_object_or_404(Product.objects.filter(is_active=True), pk=object_id)
+def product_detail(request, product_slug):
+    product = get_object_or_404(Product.objects.filter(is_active=True), slug=product_slug)
 
     if request.method == 'POST':
         form = OrderItemForm(request.POST)

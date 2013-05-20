@@ -9,15 +9,15 @@ from django.core.exceptions import ValidationError
 from plata.product.models import ProductBase
 from plata.shop.models import PriceBase
 
-from cadolib.models import Tree, Sluggable
-from mptt.fields import TreeForeignKey
-
+from cadolib.models import Tree, Sluggable, TreeForeignKey, ExtraFieldsUser, ExtraFieldsProvider
+from cadolib.fields import ExtraFieldsDefinition, ExtraFieldsValues
+ 
 from imagekit.models import ImageSpecField, ProcessedImageField
 from imagekit.processors import ResizeToFill, Adjust
-from fields import ExtraFieldsDefinition, ExtraFieldsValues, ColorsField
+from fields import ColorsField
 from haystack import indexes
 
-class ProductCategory(Tree, Sluggable):
+class ProductCategory(ExtraFieldsProvider, Sluggable):
 
     name = models.CharField(max_length=100, verbose_name=_('name'))
     active = models.BooleanField(default=True, verbose_name=_('active'))
@@ -30,7 +30,7 @@ class ProductCategory(Tree, Sluggable):
         help_text="Comma-separated keywords for search engines.")
     seo_description = models.TextField('seo_description', blank=True)
 
-    extra_fields = ExtraFieldsDefinition(null=True, blank=True)
+    #extra_fields = ExtraFieldsDefinition(null=True, blank=True)
 
     class Meta:
         verbose_name = _('category')
@@ -47,6 +47,7 @@ class ProductCategory(Tree, Sluggable):
     #    return ret
     
     #get_extra_model_fields
+    """
     def get_extra_fields(self):
         all_cats = self.get_ancestors(include_self=True)
         ret = {}
@@ -83,6 +84,11 @@ class ProductCategory(Tree, Sluggable):
             except Exception:
                 pass
         return ret
+    """
+    
+    @models.permalink
+    def get_absolute_url(self):
+        return ('products', (), {'category_slug': self.slug})
 
 class Manufacturer(models.Model):
     name = models.CharField(_('name'), max_length=256)
@@ -93,7 +99,10 @@ class Manufacturer(models.Model):
     def __unicode__(self):
         return self.name
     
-class Product(PriceBase):
+class Product(PriceBase, ExtraFieldsUser):
+    
+    PROVIDER_FIELD = 'category'
+    
     category = TreeForeignKey(ProductCategory)
     manufacturer = models.ForeignKey(Manufacturer, blank=True, null=True)
     
@@ -104,7 +113,7 @@ class Product(PriceBase):
     slug = models.SlugField(_('slug'), unique=True)
     #ordering = models.PositiveIntegerField(_('ordering'), default=0)
         
-    extra = ExtraFieldsValues(null=True, blank=True)
+    #extra = ExtraFieldsValues(null=True, blank=True)
     colors = ColorsField(blank = True)
 
     image1 = models.ImageField(verbose_name = _('Image 1'), upload_to='products', blank=True)
@@ -141,13 +150,16 @@ class Product(PriceBase):
     
     @models.permalink
     def get_absolute_url(self):
-        return ('product_detail', (), {'object_id': self.pk})
+        return ('product_detail', (), {'product_slug': self.slug})
         
-class ProductOption(ProductBase):
+class ProductOption(ProductBase, ExtraFieldsUser):
+    
+    PROVIDER_FIELD = 'product.category'
+    
     product = models.ForeignKey(Product)
     price_mod = models.IntegerField(null=True, blank=True)
     name = models.CharField(_('name'), max_length=100, blank=True, null=True)
-    extra = ExtraFieldsValues(null=True, blank=True)
+    #extra = ExtraFieldsValues(null=True, blank=True)
     colors = ColorsField(blank=True, null=True)
 
     image = models.ImageField(verbose_name = _('Image'), upload_to='products', blank=True)
@@ -170,6 +182,7 @@ class ProductOption(ProductBase):
     def get_price(self, *args, **kwargs):
         return self.product
     
+    """
     def __init__(self, *args, **kwargs):
         super(ProductOption, self).__init__(*args, **kwargs)
         
@@ -188,4 +201,6 @@ class ProductOption(ProductBase):
                         self.extra_fields[key] = field.get_default();
         except Exception:
             pass
+    """
+    
         
