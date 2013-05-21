@@ -9,8 +9,8 @@ from django.core.exceptions import ValidationError
 from plata.product.models import ProductBase
 from plata.shop.models import PriceBase
 
-from cadolib.models import Tree, Sluggable, TreeForeignKey, ExtraFieldsUser, ExtraFieldsProvider
-from cadolib.fields import ExtraFieldsDefinition, ExtraFieldsValues
+from cadocms.models import Tree, Sluggable, TreeForeignKey, ExtraFieldsUser, ExtraFieldsProvider
+from cadocms.fields import ExtraFieldsDefinition, ExtraFieldsValues
  
 from imagekit.models import ImageSpecField, ProcessedImageField
 from imagekit.processors import ResizeToFill, Adjust

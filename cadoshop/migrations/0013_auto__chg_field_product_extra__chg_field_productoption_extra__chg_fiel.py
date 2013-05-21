@@ -10,13 +10,13 @@ class Migration(SchemaMigration):
     def forwards(self, orm):
 
         # Changing field 'Product.extra'
-        db.alter_column(u'cadoshop_product', 'extra', self.gf('cadolib.fields.ExtraFieldsValues')(null=True))
+        db.alter_column(u'cadoshop_product', 'extra', self.gf('cadocms.fields.ExtraFieldsValues')(null=True))
 
         # Changing field 'ProductOption.extra'
-        db.alter_column(u'cadoshop_productoption', 'extra', self.gf('cadolib.fields.ExtraFieldsValues')(null=True))
+        db.alter_column(u'cadoshop_productoption', 'extra', self.gf('cadocms.fields.ExtraFieldsValues')(null=True))
 
         # Changing field 'ProductCategory.extra_fields'
-        db.alter_column(u'cadoshop_productcategory', 'extra_fields', self.gf('cadolib.fields.ExtraFieldsDefinition')(null=True))
+        db.alter_column(u'cadoshop_productcategory', 'extra_fields', self.gf('cadocms.fields.ExtraFieldsDefinition')(null=True))
 
     def backwards(self, orm):
 
@@ -45,7 +45,7 @@ class Migration(SchemaMigration):
             'colors': ('cadoshop.fields.ColorsField', [], {'max_length': '255', 'blank': 'True'}),
             'currency': ('django.db.models.fields.CharField', [], {'max_length': '3'}),
             'description': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
-            'extra': ('cadolib.fields.ExtraFieldsValues', [], {'default': "'null'", 'null': 'True', 'blank': 'True'}),
+            'extra': ('cadocms.fields.ExtraFieldsValues', [], {'default': "'null'", 'null': 'True', 'blank': 'True'}),
             'fits_to': ('django.db.models.fields.related.ManyToManyField', [], {'blank': 'True', 'related_name': "'fits'", 'null': 'True', 'symmetrical': 'False', 'to': u"orm['cadoshop.Product']"}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'image1': ('django.db.models.fields.files.ImageField', [], {'max_length': '100', 'blank': 'True'}),
@@ -64,7 +64,7 @@ class Migration(SchemaMigration):
             'Meta': {'object_name': 'ProductCategory'},
             'active': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
             'description': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
-            'extra_fields': ('cadolib.fields.ExtraFieldsDefinition', [], {'default': "'null'", 'null': 'True', 'blank': 'True'}),
+            'extra_fields': ('cadocms.fields.ExtraFieldsDefinition', [], {'default': "'null'", 'null': 'True', 'blank': 'True'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'level': ('django.db.models.fields.PositiveIntegerField', [], {'db_index': 'True'}),
             'lft': ('django.db.models.fields.PositiveIntegerField', [], {'db_index': 'True'}),
@@ -82,7 +82,7 @@ class Migration(SchemaMigration):
         u'cadoshop.productoption': {
             'Meta': {'object_name': 'ProductOption'},
             'colors': ('cadoshop.fields.ColorsField', [], {'max_length': '255', 'null': 'True', 'blank': 'True'}),
-            'extra': ('cadolib.fields.ExtraFieldsValues', [], {'default': "'null'", 'null': 'True', 'blank': 'True'}),
+            'extra': ('cadocms.fields.ExtraFieldsValues', [], {'default': "'null'", 'null': 'True', 'blank': 'True'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'image': ('django.db.models.fields.files.ImageField', [], {'max_length': '100', 'blank': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '100', 'null': 'True', 'blank': 'True'}),

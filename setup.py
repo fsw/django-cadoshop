@@ -8,8 +8,8 @@ setup(
     description='Cado Shop',
     author='Frank Wawrzak (CadoSolutions)',
     author_email='frank.wawrzak@cadosolutions.com',
-    url='https://github.com/fsw/django-cadolib',
-    download_url='git://github.com/fsw/django-cadolib.git',
+    url='https://github.com/fsw/django-cadoshop',
+    download_url='git://github.com/fsw/django-cadoshop.git',
     packages=['cadoshop'],
     install_requires=[
 		'plata',

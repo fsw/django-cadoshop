@@ -12,7 +12,7 @@ from models import Product, ProductOption
 from django.forms.models import inlineformset_factory
 from django.contrib.admin.util import flatten_fieldsets
 from django.utils.functional import curry
-from cadolib.admin import StaticPage, StaticPageAdmin, Setting, SettingAdmin
+from cadocms.admin import StaticPage, StaticPageAdmin, Setting, SettingAdmin
 
 class ProductForm(forms.ModelForm):
 

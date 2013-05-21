@@ -8,6 +8,13 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.utils.text import capfirst
 
+### DONT REMOVE BEFORE ALL MIGRATIONS
+from cadocms.fields import ExtraFieldsValues, ExtraFieldsDefinition
+from south.modelsinspector import add_introspection_rules
+add_introspection_rules([], ["^cadoshop\.fields\.ExtraFieldsDefinition"])
+add_introspection_rules([], ["^cadoshop\.fields\.ExtraFieldsValues"])
+###
+
 from widgets import ColorPickerWidget
 
 class ColorsField(models.CharField):

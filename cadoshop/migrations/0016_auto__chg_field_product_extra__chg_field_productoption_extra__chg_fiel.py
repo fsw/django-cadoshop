@@ -9,13 +9,25 @@ class Migration(SchemaMigration):
 
     def forwards(self, orm):
 
-        # Changing field 'ProductCategory.extra_search_terms'
-        db.alter_column(u'cadoshop_productcategory', 'extra_search_terms', self.gf('django.db.models.fields.CharField')(max_length=256, null=True))
+        # Changing field 'Product.extra'
+        db.alter_column(u'cadoshop_product', 'extra', self.gf('cadocms.fields.ExtraFieldsValues')(null=True))
+
+        # Changing field 'ProductOption.extra'
+        db.alter_column(u'cadoshop_productoption', 'extra', self.gf('cadocms.fields.ExtraFieldsValues')(null=True))
+
+        # Changing field 'ProductCategory.extra_fields'
+        db.alter_column(u'cadoshop_productcategory', 'extra_fields', self.gf('cadocms.fields.ExtraFieldsDefinition')(null=True))
 
     def backwards(self, orm):
 
-        # Changing field 'ProductCategory.extra_search_terms'
-        db.alter_column(u'cadoshop_productcategory', 'extra_search_terms', self.gf('django.db.models.fields.CharField')(default='', max_length=256))
+        # Changing field 'Product.extra'
+        db.alter_column(u'cadoshop_product', 'extra', self.gf('cadolib.fields.ExtraFieldsValues')(null=True))
+
+        # Changing field 'ProductOption.extra'
+        db.alter_column(u'cadoshop_productoption', 'extra', self.gf('cadolib.fields.ExtraFieldsValues')(null=True))
+
+        # Changing field 'ProductCategory.extra_fields'
+        db.alter_column(u'cadoshop_productcategory', 'extra_fields', self.gf('cadolib.fields.ExtraFieldsDefinition')(null=True))
 
     models = {
         u'cadoshop.manufacturer': {
